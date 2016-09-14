@@ -12,4 +12,8 @@ defmodule BusCar.Index do
     end
   end
 
+  def all(query \\ %{}) do
+    Api.get(%{path: "/_cat/indices", query: %{"v" => true}})
+  end
+
 end
