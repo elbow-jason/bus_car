@@ -57,7 +57,60 @@ defmodule BusCarPropertyTest do
     }
   end
 
+end
 
+defmodule BusCarQueryTest do
+  use ExUnit.Case
+  doctest BusCar.Query
+  alias BusCar.Query
 
+  @example [
+    :query,
+    :nested, :path, "comments",
+    :query,
+    :bool,
+    must: [
+      :match, "comments.author", "John",
+      :match, "comments.message", "cool",
+    ]
+  ]
+
+  @expected ~s(
+    {
+      "query": {
+        "nested": {
+          "path": "comments",
+          "query": {
+            "bool": {
+              "must": [
+                {"match": {"comments.author": {"query": "John"}}},
+                {"match": {"comments.message": {"query": "cool"}}}
+              ]
+            }
+          }
+        }
+      }
+    }
+  ) |> Poison.decode!
+
+  # search [index: "bear_test"] do
+  #   query do
+  #     nested [path: "comments"] do
+  #       query do
+  #         bool do
+  #           must do
+  #             match "comments.author",  "John"
+  #             match "comments.message", "cool"
+  #           end
+  #         end
+  #       end
+  #     end
+  #   end
+  # end
+
+  test "Test query generates the expected map" do
+    result = @example |> Query.generate |> Poison.encode! |> Poison.decode!
+    assert result == @expected
+  end
 
 end

@@ -1,5 +1,6 @@
 defmodule BusCar.Request do
   alias BusCar.Request
+  require Logger
 
   @json_headers [{"Content-Type", "application/json"}]
   @methods      [:get, :put, :post, :delete]
@@ -15,9 +16,45 @@ defmodule BusCar.Request do
     query:    nil,
     body:     nil,
   ]
+  defp pretty_body("") do
+    ":empty"
+  end
+  defp pretty_body(json) when json |> is_binary do
+    case json |> Poison.decode do
+      {:ok, map} -> map |> Poison.encode!(pretty: true)
+      _          -> json
+    end
+  end
+  defp pretty_body(x) do
+    "#{inspect x}"
+  end
 
-  def send(%Request{method: method, body: body, headers: headers} = req, opts) do
-    HTTPoison.request(method, req |> Request.url, body, headers, opts)
+  def send(%Request{method: method, body: body, headers: headers} = req, opts) when body |> is_binary do
+    url = req |> Request.url
+    Logger.debug("""
+
+    ===> Sending Request ===> ===> ===>
+    [MODULE]  #{__MODULE__}
+    [METHOD]  #{inspect method}
+    [URL]     #{inspect url}
+    [HEADERS] #{inspect headers}
+    [BODY]
+      #{body |> pretty_body}
+    [END]
+    """)
+    {status, resp} = HTTPoison.request(method, url, body, headers, opts)
+    Logger.debug("""
+
+    <=== Received Response <=== <=== <===
+    [MODULE]  #{__MODULE__}
+    [METHOD]  #{inspect method}
+    [URL]     #{inspect url}
+    [STATUS]  #{inspect status} #{resp |> Map.get(:status_code) |>  inspect}
+    [BODY]
+      #{resp |> Map.get(:body) |> pretty_body}
+    [END]
+    """)
+    {status, resp}
   end
 
   def new(map \\ %{}) do
@@ -87,7 +124,7 @@ defmodule BusCar.Request do
   def assign(%Request{} = req, :host, %{host: host}) do
     %{ req | host: host }
   end
-  def assign(%Request{} = req, :host, _) do
+  def assign(%Request{}, :host, _) do
     raise ":host required for requests"
   end
 

@@ -16,11 +16,16 @@ defmodule BusCar.Api do
     protocol:   @protocol,
   }
 
-  def get(%{} = map, opts \\ []),  do: request(map |> Map.put(:method, :get),  opts)
-  def post(%{} = map, opts \\ []), do: request(map |> Map.put(:method, :post), opts)
-  def put(%{} = map, opts \\ []),  do: request(map |> Map.put(:method, :put),  opts)
+  def get(req,  opts \\ []), do: req |> Dict.put(:method, :get)  |> request(opts)
+  def post(req, opts \\ []), do: req |> Dict.put(:method, :post) |> request(opts)
+  def put(req,  opts \\ []), do: req |> Dict.put(:method, :put)  |> request(opts)
 
   def request(req, opts \\ [])
+  def request(req, opts) when req |> is_list do
+    req
+    |> Enum.into(%{})
+    |> request(opts)
+  end
   def request(%Request{} = req, opts) do
     req
     |> Request.send(opts)
@@ -33,7 +38,7 @@ defmodule BusCar.Api do
     |> request(opts)
   end
 
-  defp handle_response(resp, opts \\ []) do
+  defp handle_response(resp, opts) do
     cond do
       Dict.get(opts, :raw) == true  -> resp
       true                          -> resp |> do_handle_response
