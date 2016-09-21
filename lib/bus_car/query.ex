@@ -1,45 +1,15 @@
 defmodule BusCar.Query do
+  alias BusCar.Api
+  alias BusCar.Query.Match
 
-  @matchables [
-    :match,
-    :match_phrase,
-  ]
 
-  @listables [
-    :sort,
-    :should,
-    :must,
-    :must_not,
-    :pre_tags,
-    :post_tags,
-    :actions,
-  ]
 
-  def generate([ [key] | rest ]) when key |> is_atom do
-    [ key | rest ]
-    |> generate
-    |> Enum.into(%{})
+  defmacro __using__(_opts) do
+    quote do
+      import BusCar.Query.Match, only: [match: 3, match: 2]
+    end
   end
-  def generate([:nested, :path, path, next | rest ]) do
-    %{nested: %{:path => path, next => rest |> generate}}
-  end
-  def generate([:nested, [path: path], next | rest ]) do
-    %{nested: %{:path => path, next => rest |> generate}}
-  end
-  def generate([matchable, field, value | rest ]) when matchable in @matchables do
-    [%{ matchable => %{ field => %{ :query => value |> generate }}} | rest |> generate ]
-  end
-  def generate([ listable | rest ]) when listable in @listables do
-    %{ listable => rest |> generate }
-  end
-  def generate([ {key, value} | rest ]) do
-    [ {key, value |> generate } | rest |> generate ]
-    |> Enum.into(%{})
-  end
-  def generate([ term | rest ]) when term |> is_atom do
-    [{term, rest |> generate}]
-    |> Enum.into(%{})
-  end
+
   def generate(%{} = map) do
     map
     |> Enum.map(fn {k, v} -> {k, v |> generate} end)
@@ -49,20 +19,34 @@ defmodule BusCar.Query do
     term
   end
 
+  defp match_matchables(keyword, field, value, options \\ []) do
+    case keyword do
+      :match -> Match.match(field, value, options)
+      _      -> %{ keyword => %{ field => %{ :query => value |> generate }}}
+    end
+  end
 
-  # search [index: "bear_test"] do
-  #   query do
-  #     nested [path: "comments"] do
-  #       query do
-  #         bool do
-  #           must do
-  #             match "comments.author",  "John"
-  #             match "comments.message", "cool"
-  #           end
-  #         end
-  #       end
-  #     end
-  #   end
-  # end
+  def validate_and_explain(index, doctype, query_body) do
+    Api.get(%{
+      path: [index, doctype, "_validate", "query"],
+      query: %{explain: nil},
+      body: query_body
+    })
+  end
 
+  def explain_match(index, doctype, id, body) do
+    Api.get(%{
+      path: [index, doctype, id, "_explain"],
+      body: body,
+    })
+  end
+
+  def to_json(q) do
+    Searchable.to_json(q)
+  end
+
+end
+
+defimpl Searchable, for: BusCar.Query do
+  def to_json()
 end

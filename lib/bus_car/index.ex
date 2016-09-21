@@ -12,15 +12,31 @@ defmodule BusCar.Index do
     end
   end
 
-  def all(query \\ %{}) do
+  def aliases() do
+    Api.get(%{path: "/_aliases"})
+  end
+
+  def list(query \\ %{}) do
     Api.get(%{path: "/_cat/indices", query: %{"v" => nil}})
   end
 
   def stats(index, query \\ %{}) when index |> is_binary do
-    Api.get(path: "/" <> index <> "/_stats", query: query)
+    get_index(index, "_stats", query)
   end
 
   def refresh(index, query \\ %{}) when index |> is_binary do
-    Api.get(path: "/" <> index <> "/refresh", query: query)
+    get_index(index, "_refresh", query)
+  end
+
+  def segments(index, query \\ %{}) when index |> is_binary do
+    get_index(index, "_segments", query)
+  end
+
+  def recovery(index, query \\ %{}) when index |> is_binary do
+    get_index(index, "_recovery", query)
+  end
+
+  defp get_index(index, word, query) do
+    Api.get(path: "/" <> index <> "/" <> word, query: query)
   end
 end

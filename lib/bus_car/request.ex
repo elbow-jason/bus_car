@@ -39,7 +39,7 @@ defmodule BusCar.Request do
     [URL]     #{inspect url}
     [HEADERS] #{inspect headers}
     [BODY]
-      #{body |> pretty_body}
+    #{body |> pretty_body}
     [END]
     """)
     {status, resp} = HTTPoison.request(method, url, body, headers, opts)
@@ -51,7 +51,7 @@ defmodule BusCar.Request do
     [URL]     #{inspect url}
     [STATUS]  #{inspect status} #{resp |> Map.get(:status_code) |>  inspect}
     [BODY]
-      #{resp |> Map.get(:body) |> pretty_body}
+    #{resp |> Map.get(:body) |> pretty_body}
     [END]
     """)
     {status, resp}
@@ -138,7 +138,9 @@ defmodule BusCar.Request do
     assign(%Request{} = req, :path, path)
   end
   def assign(%Request{} = req, :path, path) when path |> is_list do
-    joined = (path |> Path.join)
+    joined = path
+      |> Enum.filter(fn item -> item end)
+      |> Path.join
     assign(%Request{} = req, :path, "/" <> joined)
   end
   def assign(%Request{} = req, :path, path) when path |> is_binary do
