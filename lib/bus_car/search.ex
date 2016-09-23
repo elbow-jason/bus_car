@@ -5,7 +5,7 @@ defmodule BusCar.Search do
     do_search(nil, nil, "")
   end
   def search(index, doctype, terms) when terms |> is_list do
-    do_search(index, doctype, terms |> BusCar.Search.generate )
+    do_search(index, doctype, terms |> BusCar.Dsl.generate )
   end
   defp do_search(indices, doctype, terms) when indices |> is_list do
     do_search(indices |> Enum.join(","), doctype, terms)

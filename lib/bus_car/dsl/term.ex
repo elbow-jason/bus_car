@@ -1,5 +1,5 @@
-defmodule BusCar.Search.Term do
-  alias BusCar.Search.Term
+defmodule BusCar.Dsl.Term do
+  alias BusCar.Dsl.Term
 
   defstruct [
     field:    nil,
@@ -64,8 +64,8 @@ defmodule BusCar.Search.Term do
 
 end
 
-defimpl Searchable, for: BusCar.Search.Term do
-  alias BusCar.Search.Term
+defimpl Searchable, for: BusCar.Dsl.Term do
+  alias BusCar.Dsl.Term
 
   @invalids [nil, true, false, ""]
 

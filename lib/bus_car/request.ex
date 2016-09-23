@@ -50,7 +50,7 @@ defmodule BusCar.Request do
     [METHOD]  #{inspect method}
     [URL]     #{inspect url}
     [STATUS]  #{inspect status} #{resp |> Map.get(:status_code) |>  inspect}
-    [BODY]
+    [RESPONSE BODY]
     #{resp |> Map.get(:body) |> pretty_body}
     [END]
     """)

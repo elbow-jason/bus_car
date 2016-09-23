@@ -1,5 +1,5 @@
-defmodule BusCar.Search.Match do
-  alias BusCar.Search.Match
+defmodule BusCar.Dsl.Match do
+  alias BusCar.Dsl.Match
 
   defstruct [
     field:    nil,
@@ -79,8 +79,8 @@ defmodule BusCar.Search.Match do
 
 end
 
-defimpl Searchable, for: BusCar.Search.Match do
-  alias BusCar.Search.Match
+defimpl Searchable, for: BusCar.Dsl.Match do
+  alias BusCar.Dsl.Match
 
   @invalids [nil, true, false, ""]
 
