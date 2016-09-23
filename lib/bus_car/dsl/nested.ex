@@ -16,7 +16,7 @@ defmodule BusCar.Dsl.Nested do
   end
 
   def parse([:nested, :path, path, opts, :query | rest ], %{} = acc) when is_binary(path) and is_list(opts) do
-    mapped = opts
+    opts
     |> Enum.map(%{})
     |> mapify_query(path, rest, acc)
   end

@@ -3,5 +3,6 @@ defmodule BusCar.Dsl.Should do
 
   list_rule(:should, :match)
   list_rule(:should, :term)
+  list_rule(:should, :prefix)
 
 end

@@ -5,4 +5,6 @@ defmodule BusCar.Dsl.Filter do
   list_rule(:filter, :term)
   list_rule(:filter, :range)
   map_rule(:filter, :range)
+  list_rule(:filter, :prefix)
+
 end

@@ -1,10 +1,6 @@
 defmodule BusCar.Dsl do
-  alias BusCar.Dsl.{
-    Query, Bool,
-    Should, Must, MustNot, Filter,
-    Match, Term,
-    ConstantScore, Nested, Range
-  }
+  alias BusCar.Dsl.{Query, Bool, Should, Must, MustNot, Filter, Match, Term,
+    ConstantScore, Nested, Range, Exists, Prefix}
 
 
   def parse(dsl, acc \\ %{})
@@ -16,7 +12,6 @@ defmodule BusCar.Dsl do
 
   def get_key(mod) do
     case mod do
-      ConstantScore -> :constant_score
       Match   -> :match
       Nested  -> :nested
       Term    -> :term
@@ -24,25 +19,31 @@ defmodule BusCar.Dsl do
       Query   -> :query
       Should  -> :should
       Must    -> :must
-      MustNot -> :must
+      MustNot -> :must_not
       Filter  -> :filter
       Range   -> :range
+      Exists  -> :exists
+      Prefix  -> :prefix
+      ConstantScore -> :constant_score
       _ -> raise "Invalid Module - #{inspect mod}"
     end
   end
 
   def get_handler(key) do
     case key do
-      :match  -> Match
-      :nested -> Nested
-      :term   -> Term
-      :bool   -> Bool
-      :query  -> Query
-      :should -> Should
-      :must   -> Must
-      :filter -> Filter
+      :match    -> Match
+      :nested   -> Nested
+      :term     -> Term
+      :bool     -> Bool
+      :query    -> Query
+      :should   -> Should
+      :must     -> Must
+      :must_not -> MustNot
+      :filter   -> Filter
+      :range    -> Range
+      :exists   -> Exists
+      :prefix   -> Prefix
       :constant_score -> ConstantScore
-      :range  -> Range
        _ -> raise "Invalid Handler Key - #{inspect key}"
     end
   end
