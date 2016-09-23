@@ -3,7 +3,7 @@ defmodule BusCar.Dsl do
     Query, Bool,
     Should, Must, MustNot, Filter,
     Match, Term,
-    ConstantScore, Nested,
+    ConstantScore, Nested, Range
   }
 
 
@@ -26,6 +26,7 @@ defmodule BusCar.Dsl do
       Must    -> :must
       MustNot -> :must
       Filter  -> :filter
+      Range   -> :range
       _ -> raise "Invalid Module - #{inspect mod}"
     end
   end
@@ -40,6 +41,8 @@ defmodule BusCar.Dsl do
       :should -> Should
       :must   -> Must
       :filter -> Filter
+      :constant_score -> ConstantScore
+      :range  -> Range
        _ -> raise "Invalid Handler Key - #{inspect key}"
     end
   end
