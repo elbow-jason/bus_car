@@ -41,14 +41,5 @@ defmodule BusCar.Cluster do
     |> Map.merge(default)
     |> Api.get
   end
-  #
-  # GET /_cluster/health?pretty
-  # GET /_cluster/health?wait_for_status=yellow&timeout=50s
-  # GET /_cluster/state
-  # GET /_cluster/stats?human&pretty
-  # GET /_cluster/pending_tasks
-  # GET /_nodes
-  # GET /_nodes/stats
-  # GET /_nodes/nodeId1,nodeId2/stats
 
 end

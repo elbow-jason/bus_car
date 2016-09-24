@@ -1,50 +1,45 @@
 defmodule BusCar.Dsl do
-  alias BusCar.Dsl.{Query, Bool, Should, Must, MustNot, Filter, Match, Term,
-    ConstantScore, Nested, Range, Exists, Prefix}
+  alias BusCar.Dsl
 
+  @module_list [
+    {Dsl.Term, :term},
+    {Dsl.Bool, :bool},
+    {Dsl.Must, :must},
+    {Dsl.Match, :match},
+    {Dsl.Query, :query},
+    {Dsl.Range, :range},
+    {Dsl.Nested, :nested},
+    {Dsl.Filter, :filter},
+    {Dsl.Exists, :exists},
+    {Dsl.Prefix, :prefix},
+    {Dsl.Regexp, :regexp},
+    {Dsl.Should, :should},
+    {Dsl.MustNot, :must_not},
+    {Dsl.Wildcard, :wildcard},
+    {Dsl.QueryString, :query_string},
+    {Dsl.ConstantScore, :constant_score},
+  ]
+  @key_list @module_list
+    |> Enum.map(fn {k, v} -> {v, k} end)
 
   def parse(dsl, acc \\ %{})
   def parse([], acc), do: acc
   def parse([:query | rest ], acc) do
-    {rest, acc} = Query.parse([:query | rest], acc)
+    {rest, acc} = Dsl.Query.parse([:query | rest], acc)
     parse(rest, acc)
   end
 
   def get_key(mod) do
-    case mod do
-      Match   -> :match
-      Nested  -> :nested
-      Term    -> :term
-      Bool    -> :bool
-      Query   -> :query
-      Should  -> :should
-      Must    -> :must
-      MustNot -> :must_not
-      Filter  -> :filter
-      Range   -> :range
-      Exists  -> :exists
-      Prefix  -> :prefix
-      ConstantScore -> :constant_score
+    case Keyword.fetch(@module_list, mod) do
+      {:ok, key} -> key
       _ -> raise "Invalid Module - #{inspect mod}"
     end
   end
 
   def get_handler(key) do
-    case key do
-      :match    -> Match
-      :nested   -> Nested
-      :term     -> Term
-      :bool     -> Bool
-      :query    -> Query
-      :should   -> Should
-      :must     -> Must
-      :must_not -> MustNot
-      :filter   -> Filter
-      :range    -> Range
-      :exists   -> Exists
-      :prefix   -> Prefix
-      :constant_score -> ConstantScore
-       _ -> raise "Invalid Handler Key - #{inspect key}"
+    case Keyword.fetch(@key_list, key) do
+      {:ok, mod} -> mod
+      _ -> raise "Invalid Handler Key - #{inspect key}"
     end
   end
 
@@ -150,7 +145,8 @@ defmodule BusCar.Dsl do
       end
     end
   end
-  #
+
+
   # defmacro stem_rule(root, stem) do
   #   quote do
   #     @stems unquote(stem)
@@ -160,8 +156,9 @@ defmodule BusCar.Dsl do
   #       parse_map([unquote(root) | rest], acc |> Map.put(unquote(root), parsed))
   #     end
   #   end
-  #
   # end
+
+
 
 
 end

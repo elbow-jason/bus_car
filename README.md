@@ -22,3 +22,27 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
     end
     ```
 
+### Features/Goals/Wishes/Todos:
+
+  - [x] Customizable Config
+  - [x] Bool Dsl
+  - [x] ConstantScore Dsl
+  - [x] Exists Dsl
+  - [x] Filter Dsl
+  - [x] Match Dsl
+  - [x] Query Dsl
+  - [x] MustNot Dsl
+  - [x] Must Dsl
+  - [x] Nested Dsl
+  - [x] Prefix Dsl
+  - [x] Query Dsl
+  - [x] Range Dsl
+  - [x] Should Dsl
+  - [x] Term Dsl
+  - [ ] Functional Tests!
+  - [ ] Geo Dsl
+  - [ ] MoreLikeThis Query
+  - [ ] Document to DSL to Requests pipeline
+  - [ ] Ecto-ish Interface
+  - [ ] Upsert
+  - [ ] Hex.pm

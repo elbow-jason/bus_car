@@ -1,8 +1,15 @@
 defmodule BusCar.Dsl.Should do
   use BusCar.Dsl
 
-  list_rule(:should, :match)
-  list_rule(:should, :term)
-  list_rule(:should, :prefix)
+  @key :should
+
+  list_rule(@key, :match)
+  list_rule(@key, :term)
+  list_rule(@key, :exists)
+  list_rule(@key, :prefix)
+  list_rule(@key, :wildcard)
+  list_rule(@key, :range)
+  list_rule(@key, :fuzzy)
+  list_rule(@key, :regexp)
 
 end

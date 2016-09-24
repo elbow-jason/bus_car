@@ -6,5 +6,4 @@ defmodule BusCar.Dsl.Bool do
   branch_list_rule(:bool, :should)
   branch_list_rule(:bool, :filter)
 
-
 end
