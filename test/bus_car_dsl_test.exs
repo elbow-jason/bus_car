@@ -32,7 +32,7 @@ defmodule BusCarDslTest do
 
 
 
-  test "Test query generates a nested map" do
+  test "tirex example" do
     assert Dsl.parse([
         :query, :nested, :path, "comments",
           :query, :bool, :must,

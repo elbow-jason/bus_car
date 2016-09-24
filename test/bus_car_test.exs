@@ -51,7 +51,6 @@ defmodule BusCarPropertyTest do
   use ExUnit.Case
   doctest BusCar.Property
   alias BusCar.Property
-  alias BusCarTest.Doggy
 
   test "new returns a %Property{} struct" do
     assert Property.new(:beef, :cake) == %Property{
