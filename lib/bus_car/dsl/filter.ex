@@ -16,5 +16,13 @@ defmodule BusCar.Dsl.Filter do
   map_rule(@key, :match)
   map_rule(@key, :term)
 
+  def stopwords(words) when words |> is_list do
+    %{
+      stopwords_filter: %{
+        type: "stop",
+        stopwords: words
+      }
+    }
+  end
 
 end

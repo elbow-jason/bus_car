@@ -1,4 +1,4 @@
-defmodule BusCar.Query do
+defmodule BusCar.Explain do
   alias BusCar.Api
 
   def validate_and_explain(index, doctype, query_body) do

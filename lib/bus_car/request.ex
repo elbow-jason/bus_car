@@ -5,7 +5,6 @@ defmodule BusCar.Request do
   @json_headers [{"Content-Type", "application/json"}]
   @methods      [:get, :put, :post, :delete]
 
-
   defstruct [
     method:   nil,
     headers:  nil,
@@ -16,6 +15,7 @@ defmodule BusCar.Request do
     query:    nil,
     body:     nil,
   ]
+
   defp pretty_body("") do
     ":empty"
   end
@@ -59,6 +59,7 @@ defmodule BusCar.Request do
 
   def new(map \\ %{}) do
     # the order of these calls matters
+    # so don't mess them up
     %Request{}
     |> assign(:body, map)
     |> assign(:method, map)
