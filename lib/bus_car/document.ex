@@ -1,5 +1,5 @@
 defmodule BusCar.Document do
-  alias BusCar.{Meta, Property}
+  alias BusCar.{Meta, Property, Mapping}
 
   defmacro document(index, doctype, block) do
     quote do
@@ -13,8 +13,9 @@ defmodule BusCar.Document do
       def properties, do: @properties
       def type,       do: :object
       def mapping do
-        %{
-          index => %{
+        %Mapping{
+          index: index,
+          mappings: %{
             doctype => %{
               :properties => Enum.reduce(@properties, %{}, &Property.to_mapping/2)
             }

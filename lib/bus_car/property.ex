@@ -1,5 +1,6 @@
 defmodule BusCar.Property do
-  alias BusCar.{Property, Type}
+  alias BusCar.Property
+
   defstruct [
     name: nil,
     type: nil,
@@ -19,21 +20,20 @@ defmodule BusCar.Property do
     |> Map.put(prop.name, payload(prop))
   end
 
-
   defp payload(%Property{} = prop) do
     %{ type: extract_type(prop) }
   end
 
-  defp extract_type(%{type: type_def}) do
+  defp extract_type(%{:type => type_def}) do
     type_def
     |> extract_type
   end
   defp extract_type(type_def) do
-    try do
+    # type_def.type
+    if :erlang.function_exported(type_def, :type, 0) do
       type_def.type
-    rescue
-      _ ->
-        type_def
+    else
+      type_def
     end
   end
 

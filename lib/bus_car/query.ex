@@ -1,6 +1,5 @@
 defmodule BusCar.Query do
   alias BusCar.Api
-  alias BusCar.Query
 
   def validate_and_explain(index, doctype, query_body) do
     Api.get(%{

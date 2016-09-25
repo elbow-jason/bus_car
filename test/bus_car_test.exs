@@ -30,16 +30,13 @@ defmodule BusCarTest do
   end
 
   test "document mapping returns a valid Elasticsearch mapping" do
-    assert Doggy.mapping == %{
-      animal: %{
+    assert Doggy.mapping == %BusCar.Mapping{
+      index: :animal,
+      mappings: %{
         dog: %{
           properties: %{
-            age: %{
-              type: :integer
-            },
-            name: %{
-              type: :string
-            },
+            age: %{type:  :integer},
+            name: %{type: :string},
           }
         }
       }

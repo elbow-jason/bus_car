@@ -5,10 +5,7 @@ defmodule BusCar.Search do
     do_search(nil, nil, "")
   end
   def search(dsl) when dsl |> is_list do
-    Api.get(%{
-      path: ["_search"],
-      body: BusCar.Dsl.parse(dsl),
-    })
+    do_search(nil, nil, dsl)
   end
   def search(index, doctype, terms) when terms |> is_list do
     do_search(index, doctype, terms |> BusCar.Dsl.parse )

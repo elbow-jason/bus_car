@@ -19,7 +19,7 @@ defmodule BusCar.Dsl.Range do
     parse_map([:range, field | rest ], acc |> Map.put(:range, new_range))
   end
 
-  defp parse_map([:range, field | rest], acc) do
+  defp parse_map([:range, _ | rest], acc) do
     {rest, acc}
   end
 
