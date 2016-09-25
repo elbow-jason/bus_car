@@ -3,9 +3,15 @@ defmodule BusCar.Document do
 
   defmacro document(index, doctype, block) do
     quote do
+
+
       Module.put_attribute(__MODULE__, :index, unquote(index |> Meta.index))
       Module.put_attribute(__MODULE__, :doctype, unquote(doctype |> Meta.doctype))
       Module.register_attribute(__MODULE__, :properties, accumulate: true)
+
+      # CRUD hooks
+      Module.register_attribute(__MODULE__, :before_inserts, accumulate: true)
+      Module.register_attribute(__MODULE__, :before_updates, accumulate: true)
       unquote(block)
 
       def index,      do: @index
@@ -22,8 +28,25 @@ defmodule BusCar.Document do
           }
         }
       end
+
+      defstruct @properties
+        |> Enum.map(fn item -> {item.name, nil} end)
+        |> Kernel.++([:id])
+
+      @before_compile BusCar.Document
     end
   end
+
+  defmacro __before_compile__(_opts) do
+    quote do
+      def __before_insert__(%{:__struct__ => __MODULE__} = struct, opts \\ []) do
+        {struct, _} = @before_inserts
+          |> Enum.reduce({struct, []}, fn(func, {map, opts}) -> func.(map, opts) end)
+        struct
+      end
+    end
+  end
+
 
   defmacro property(name, type, opts \\ []) do
     quote do
@@ -31,6 +54,29 @@ defmodule BusCar.Document do
       prop = Property.new(unquote(name), unquote(type), unquote(opts))
       Module.put_attribute(__MODULE__, :properties, prop)
     end
+  end
+
+  def from_json(mod, json) when json |> is_list do
+    Enum.map(json, fn item -> from_json(mod, item) end)
+  end
+  def from_json(mod, json) when json |> is_map do
+    struct = mod.__struct__
+    src = json["_source"]
+    struct
+    |> Map.keys
+    |> Enum.filter(fn
+      :__struct__ -> false
+      _ -> true
+    end)
+    |> Enum.map(fn item -> {item, Atom.to_string(item)} end)
+    |> Enum.reduce(struct, fn({atom, string}, acc) -> Map.put(acc, atom, src[string]) end)
+    |> Map.put(:id, json["_id"])
+  end
+
+  def to_json(%{:__struct__ => _} = struct) do
+    struct
+    |> Map.from_struct
+    |> Map.drop([:id, :__struct__])
   end
 
 end

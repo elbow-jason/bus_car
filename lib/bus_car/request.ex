@@ -141,6 +141,7 @@ defmodule BusCar.Request do
   def assign(%Request{} = req, :path, path) when path |> is_list do
     joined = path
       |> Enum.filter(fn item -> item end)
+      |> Enum.map(&to_string/1)
       |> Path.join
     assign(%Request{} = req, :path, "/" <> joined)
   end

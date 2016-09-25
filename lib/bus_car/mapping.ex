@@ -8,6 +8,7 @@ defmodule BusCar.Mapping do
   defmacro __using__(_opts) do
     quote do
       import BusCar.Document
+      import BusCar.Document.Timestamp
     end
   end
 

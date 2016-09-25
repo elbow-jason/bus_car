@@ -7,6 +7,12 @@ defmodule BusCar.Search do
   def search(dsl) when dsl |> is_list do
     do_search(nil, nil, dsl)
   end
+  def search(index, doctype, terms) when is_atom(index) and not is_nil(index) do
+    search(Atom.to_string(index), doctype, terms)
+  end
+  def search(index, doctype, terms) when is_atom(doctype) and not is_nil(doctype) do
+    search(index, Atom.to_string(doctype), terms)
+  end
   def search(index, doctype, terms) when terms |> is_list do
     do_search(index, doctype, terms |> BusCar.Dsl.parse )
   end
