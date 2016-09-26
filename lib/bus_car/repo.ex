@@ -1,11 +1,20 @@
 defmodule BusCar.Repo do
   alias BusCar.Search
 
-  defmacro __using__(_opts) do
+  defmacro __using__(opts) do
     quote do
 
-      alias BusCar.{Search, Document, Api, Query}
+      alias BusCar.{Document, Query}
       require Logger
+      require BusCar.Repo.Modules
+
+      BusCar.Repo.Modules.define_config(__MODULE__, unquote(opts) |> Keyword.get(:otp_app))
+      @api BusCar.Repo.Modules.define_api(__MODULE__, unquote(opts) |> Keyword.get(:otp_app))
+      BusCar.Repo.Modules.define_search(__MODULE__, @api)
+
+      def api do
+        @api
+      end
 
       def all(mod, query \\ [], _opts \\ [])
       def all(mod, [], opts) do
@@ -23,7 +32,7 @@ defmodule BusCar.Repo do
           path: (mod.__struct__ |> Document.path) ++ ["_search"],
           body: body
         }
-        case Api.get(req, opts) do
+        case @api.get(req, opts) do
           result when result |> is_list -> Document.from_json(mod, result)
           {:error, reason} -> {:error, reason}
           _                -> {:error, :api_error}
@@ -35,7 +44,8 @@ defmodule BusCar.Repo do
         get(mod, id |> Integer.to_string, opts )
       end
       def get(mod, id, opts) when id |> is_binary do
-        case Api.get(%{path: [mod.index, mod.doctype, id]}, opts) do
+        req = %{path: [mod.index, mod.doctype, id]}
+        case @api.get(req, opts) do
           {:error, reason} -> {:error, reason}
           result           -> Document.from_json(mod, result)
         end
@@ -48,13 +58,13 @@ defmodule BusCar.Repo do
 
       def insert(struct, opts \\ [])
       def insert(%{:__struct__ => mod, id: id} = struct, opts) do
-        ready_struct = struct |> mod.__before_insert__
-        resp = Api.post(%{
+        %{
           query: %{op_type: "create"},
           path: struct |> Document.path,
-          body: ready_struct |> Document.to_json,
-        }, opts)
-        handle_insert_response(resp, mod)
+          body: struct |> mod.__before_insert__ |> Document.to_json,
+        }
+        |> @api.post(opts)
+        |> handle_insert_response(mod)
       end
 
       defp handle_insert_response({:error, %{"status" => 409}}, _) do
@@ -78,7 +88,7 @@ defmodule BusCar.Repo do
 
       def update(%{__struct__: mod, _version: vsn} = struct, opts \\ []) do
         # need optimistic locking on :_version here
-        Api.put(%{
+        @api.put(%{
           path: struct |> Document.path,
           body: struct |> mod.__before_update__(opts) |> Document.to_json
         }, opts)
@@ -93,7 +103,7 @@ defmodule BusCar.Repo do
         raise "#{__MODULE__} - must specify an id to delete"
       end
       def delete(mod, id, opts) when id |> is_binary or id |> is_integer do
-        case Api.delete(%{path: [mod.index, mod.doctype, id]}, opts) do
+        case @api.delete(%{path: [mod.index, mod.doctype, id]}, opts) do
           %{"_id" => id}   -> :ok
           {:error, reason} -> {:error, reason}
           err              -> {:error, err}

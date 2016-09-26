@@ -2,8 +2,12 @@
 # and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
 
-config :bus_car, :api,
+config :bus_car, :default_api,
   host: "localhost",
+  port: 9200
+
+config :bus_car, :example,
+  host: "127.0.0.1",
   port: 9200
 
 # This configuration is loaded before any dependency and is restricted
