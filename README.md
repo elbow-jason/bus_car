@@ -37,7 +37,6 @@ iex> Repo.all(Doge)
 [
   %Example.Doge{_version: 1, age: 26, id: "33", inserted_at: "2016-09-26T02:34:20.187264Z", name: "Moe Moe", updated_at: "2016-09-26T02:34:20.187264Z"},
   %Example.Doge{_version: 1, age: 10, id: "AVdkWj0_-SwwFG-cHjcZ", inserted_at: "2016-09-26T02:36:58.044176Z", name: "Dora", updated_at: "2016-09-26T02:36:58.044176Z"}
-
 ]
 ```
 
@@ -55,7 +54,10 @@ Go Bananas (Young Adult Doges only)
 
 ```elixir
 iex> Repo.search(Doge, [:query, :bool, :must, :range, :age, :gte, 18, :lt, 30]
-
+[
+  %Example.Doge{_version: 1, age: 26, id: "33", inserted_at: "2016-09-26T02:34:20.187264Z", name: "Moe Moe", updated_at: "2016-09-26T02:34:20.187264Z"},
+  %Example.Doge{_version: 1, age: 18, id: "AVdkXSuf-SwwFG-cHjcd", inserted_at: "2016-09-26T02:40:10.140185Z", name: "Daisy May", updated_at: "2016-09-26T02:40:10.140185Z"}
+]
 ```
 
 
