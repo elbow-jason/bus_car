@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/elbow-jason/bus_car.svg?branch=master)](https://travis-ci.org/elbow-jason/bus_car)
 
-**A super simple Elasticsearch tool with its own DSL and Ecto-like use.**
+**A super simple Elasticsearch tool with its own DSL and Ecto-like usage.**
 ###### Note:  This is tool/library is in extreme flux use at your own risk.
 
 ## Usage
@@ -101,6 +101,9 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
   - [x] Term Dsl
   - [x] Document to DSL to Requests pipeline
   - [x] Ecto-ish Interface
+  - [ ] Docs
+  - [ ] Mappings Tests
+  - [ ] Github Repo for Example Project and Advanced Examples
   - [ ] Api Tests
   - [ ] Repo Interface Tests
   - [ ] Optimistic "Locking" on update
