@@ -47,17 +47,54 @@ defmodule BusCar.Api do
 
   defp handle_response(resp, opts) do
     cond do
-      Dict.get(opts, :raw) == true  -> resp
-      true                          -> resp |> do_handle_response
+      Dict.get(opts, :raw_response) == true  -> resp
+      true                          -> resp |> destructure_response
     end
   end
-  defp do_handle_response({:ok, resp}) do
-    resp |> do_handle_response
+
+  defp destructure_response(response) do
+    case response do
+      {:ok, %{status_code: c} = resp} when c in 200..299 -> success(resp)
+      {:error, err}   -> failure(err)
+      {:ok, bad_resp} -> failure(bad_resp)
+    end
   end
-  defp do_handle_response(%{status_code: 404}) do
-    {:error, :not_found}
+
+  # defp do_handle_response({:ok, resp}) do
+  #   resp |> do_handle_response
+  # end
+  # defp do_handle_response(%{status_code: 404}) do
+  #   {:error, :not_found}
+  # end
+
+  defp failure({:error, err}) do
+    failure(err)
   end
-  defp do_handle_response(%{status_code: status} = resp) when status in 200..299 do
+  defp failure(%{body: body}) do
+    failure(body)
+  end
+  defp failure(err) when err |> is_binary do
+    case err |> Poison.decode do
+      {:ok, json} ->
+        Logger.error("""
+        [MODULE] #{__MODULE__}
+        [ERROR]  API Response Error
+        [REASON] #{inspect json}
+        """)
+        {:error, json}
+      {:error, reason} ->
+        Logger.error("""
+        [MODULE]      #{__MODULE__}
+        [ERROR]       API Response Error
+        [REASON]      Failure To Decode JSON
+        [POISON ERR]  #{inspect reason}
+        [RESPONSE]    #{inspect err}
+        """)
+        {:error, :invalid_response}
+    end
+  end
+
+  defp success(resp) do
     with {:ok, body}  <- decode_body(resp),
           :ok         <- ensure_success(body),
          {:ok, hits}  <- get_hits(body)
@@ -69,21 +106,21 @@ defmodule BusCar.Api do
     end
   end
 
-  defp do_handle_response({:error, %HTTPoison.Response{} = resp}) do
-    Logger.error("Invalid Response\nGot: #{inspect resp}")
-    case resp.body |> Poison.decode do
-      {:ok, body} -> {:error, %{resp | body: body}}
-      _           -> {:error, resp}
-    end
-  end
-  defp do_handle_response({:error, reason}) do
-    Logger.error("Invalid Response\nGot: #{inspect reason}")
-    {:error, reason}
-  end
-  defp do_handle_response(x) do
-    Logger.error("Unknown Response\nGot: #{inspect x}")
-    {:error, x}
-  end
+  # defp do_handle_response({:error, %HTTPoison.Response{} = resp}) do
+  #   Logger.error("Invalid Response\nGot: #{inspect resp}")
+  #   case resp.body |> Poison.decode do
+  #     {:ok, body} -> {:error, %{resp | body: body}}
+  #     _           -> {:error, resp}
+  #   end
+  # end
+  # defp do_handle_response({:error, reason}) do
+  #   Logger.error("Invalid Response\nGot: #{inspect reason}")
+  #   {:error, reason}
+  # end
+  # defp do_handle_response(x) do
+  #   Logger.error("Unknown Response\nGot: #{inspect x}")
+  #   {:error, x}
+  # end
 
   defp decode_body(%{body: body}) do
     body |> decode_body

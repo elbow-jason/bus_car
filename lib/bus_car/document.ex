@@ -9,6 +9,12 @@ defmodule BusCar.Document do
       Module.put_attribute(__MODULE__, :doctype, unquote(doctype |> Meta.doctype))
       Module.register_attribute(__MODULE__, :properties, accumulate: true)
 
+      #internals
+      Module.register_attribute(__MODULE__, :internal_fields, accumulate: true)
+      Module.put_attribute(__MODULE__, :internal_fields, :id)
+      Module.put_attribute(__MODULE__, :internal_fields, :__struct__)
+      Module.put_attribute(__MODULE__, :internal_fields, :_version)
+
       # CRUD hooks
       Module.register_attribute(__MODULE__, :before_inserts, accumulate: true)
       Module.register_attribute(__MODULE__, :before_updates, accumulate: true)
@@ -16,7 +22,6 @@ defmodule BusCar.Document do
 
       def index,      do: @index
       def doctype,    do: @doctype
-      def properties, do: @properties
       def type,       do: :object
       def mapping do
         %Mapping{
@@ -31,7 +36,10 @@ defmodule BusCar.Document do
 
       defstruct @properties
         |> Enum.map(fn item -> {item.name, nil} end)
-        |> Kernel.++([:id])
+        |> Kernel.++(Enum.filter(@internal_fields, fn
+            :__struct__ -> nil
+            _           -> true
+          end))
 
       @before_compile BusCar.Document
     end
@@ -39,8 +47,18 @@ defmodule BusCar.Document do
 
   defmacro __before_compile__(_opts) do
     quote do
+
+      def properties,      do: @properties
+      def internal_fields, do: @internal_fields
+
       def __before_insert__(%{:__struct__ => __MODULE__} = struct, opts \\ []) do
         {struct, _} = @before_inserts
+          |> Enum.reduce({struct, []}, fn(func, {map, opts}) -> func.(map, opts) end)
+        struct
+      end
+
+      def __before_update__(%{:__struct__ => __MODULE__} = struct, opts \\ []) do
+        {struct, _} = @before_updates
           |> Enum.reduce({struct, []}, fn(func, {map, opts}) -> func.(map, opts) end)
         struct
       end
@@ -71,6 +89,7 @@ defmodule BusCar.Document do
     |> Enum.map(fn item -> {item, Atom.to_string(item)} end)
     |> Enum.reduce(struct, fn({atom, string}, acc) -> Map.put(acc, atom, src[string]) end)
     |> Map.put(:id, json["_id"])
+    |> Map.put(:_version, json["_version"])
   end
 
   def to_json(%{:__struct__ => _} = struct) do
@@ -78,5 +97,30 @@ defmodule BusCar.Document do
     |> Map.from_struct
     |> Map.drop([:id, :__struct__])
   end
+
+  def path(%{:__struct__ => mod, id: id}) do
+    [mod.index, mod.doctype, id]
+  end
+
+  def remove_nils(%{:__struct__ => _} = struct) do
+    struct
+    |> to_json
+    |> remove_nils
+  end
+  def remove_nils(%{} = map) do
+    map
+    |> Enum.into([])
+    |> remove_nils
+    |> Enum.into(%{})
+  end
+  def remove_nils(list) when list |> is_list do
+    list
+    |> Enum.filter(fn
+      nil       -> nil
+      {_, nil}  -> nil
+      _         -> true
+    end)
+  end
+
 
 end
