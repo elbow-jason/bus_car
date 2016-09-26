@@ -27,6 +27,19 @@ defmodule BusCarDslRangeTest do
     assert result == {[], map }
   end
 
+  test "range with atom as field" do
+    result = Range.parse([:range, :name, :lte, 6], %{})
+    map = %{range: %{name: %{lte: 6}}}
+    assert result == {[], map }
+  end
+
+  test "range with list as accumulator" do
+    result = Range.parse([:range, :name, :lte, 6], [])
+    list = [%{range: %{name: %{lte: 6}}}]
+    assert result == {[], list }
+  end
+
+
   test "range compound query" do
     result = Range.parse([:range, "name", :lte, 6, :gte, 3], %{})
     map = %{range: %{"name" => %{lte: 6, gte: 3}}}

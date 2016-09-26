@@ -11,6 +11,15 @@ defmodule BusCar.Dsl.Range do
     parse_map([:range | rest], acc)
   end
 
+  def parse([:range | rest ], acc) when is_list(acc) do
+    parse_list([:range | rest], acc)
+  end
+
+  defp parse_list([:range | rest ], acc) do
+    {rest, submap} = parse_map([:range | rest], %{})
+    {rest, [ submap | acc ]}
+  end
+
   defp parse_map([:range, field, comparator, value | rest], acc) when comparator in @comparators do
     comp_group = %{comparator => value}
     new_range = acc
