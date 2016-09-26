@@ -1,5 +1,7 @@
 # BusCar
 
+[![Build Status](https://travis-ci.org/elbow-jason/bus_car.svg?branch=master)](https://travis-ci.org/elbow-jason/bus_car)
+
 **TODO: Add description**
 
 ## Installation
