@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/elbow-jason/bus_car.svg?branch=master)](https://travis-ci.org/elbow-jason/bus_car)
 
 **A super simple Elasticsearch tool with its own DSL and Ecto-like usage.**
-###### Note:  This is tool/library is in extreme flux use at your own risk.
+###### Note:  This is tool/library is in extreme flux. Use at your own risk.
 
 ## Usage
 
@@ -11,7 +11,7 @@ Make the Repo
 
 ```elixir
 defmodule Example.Repo do
-  use BusCar.Repo, opt_app: Example
+  use BusCar.Repo, opt_app: :example
 end
 ```
 
@@ -53,7 +53,7 @@ iex> Repo.insert(%Doge{id: 10, name: "Punky", age: 35})
 Go Bananas (Young Adult Doges only)
 
 ```elixir
-iex> Repo.search(Doge, [:query, :bool, :must, :range, :age, :gte, 18, :lt, 30]
+iex> Repo.search(Doge, [:query, :bool, :must, :range, :age, :gte, 18, :lt, 30])
 [
   %Example.Doge{_version: nil, age: 26, id: "33", inserted_at: "2016-09-26T02:34:20.187264Z", name: "Moe Moe", updated_at: "2016-09-26T02:34:20.187264Z"},
   %Example.Doge{_version: nil, age: 18, id: "AVdkXSuf-SwwFG-cHjcd", inserted_at: "2016-09-26T02:40:10.140185Z", name: "Daisy May", updated_at: "2016-09-26T02:40:10.140185Z"}
@@ -101,15 +101,18 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
   - [x] Term Dsl
   - [x] Document to DSL to Requests pipeline
   - [x] Ecto-ish Interface
+  - [x] Make sure Repo uses `:otp_app` keyword arg
+  - [x] Request Tests
+  - [x] Api Tests
+  - [ ] Repo Interface Tests
   - [ ] Docs
   - [ ] Mappings Tests
   - [ ] Github Repo for Example Project and Advanced Examples
-  - [ ] Api Tests
-  - [ ] Repo Interface Tests
   - [ ] Optimistic "Locking" on update
-  - [ ] Make sure Repo uses `:otp_app` keyword arg
   - [ ] Full Functional Tests
   - [ ] Geo Dsl
   - [ ] MoreLikeThis Query
   - [ ] Upsert
   - [ ] Hex.pm
+  - [ ] DB Connection Pooling?
+  - [ ] Extract BusCar DSL into its own Repo

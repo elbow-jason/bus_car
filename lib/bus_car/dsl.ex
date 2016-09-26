@@ -7,6 +7,7 @@ defmodule BusCar.Dsl do
     {Dsl.Must, :must},
     {Dsl.Match, :match},
     {Dsl.Query, :query},
+    {Dsl.Fuzzy, :fuzzy},
     {Dsl.Range, :range},
     {Dsl.Nested, :nested},
     {Dsl.Filter, :filter},

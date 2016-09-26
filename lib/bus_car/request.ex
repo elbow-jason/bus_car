@@ -29,7 +29,7 @@ defmodule BusCar.Request do
     "#{inspect x}"
   end
 
-  def send(%Request{method: method, body: body, headers: headers} = req, opts) when body |> is_binary do
+  def send(%Request{method: method, body: body, headers: headers} = req, opts \\ []) when body |> is_binary do
     url = req |> Request.url
     Logger.debug("""
 
@@ -133,6 +133,10 @@ defmodule BusCar.Request do
   def assign(%Request{} = req, :port, %{port: port}) do
     %{ req | port: port }
   end
+  def assign(%Request{}, :port, _) do
+    raise ":port required for requests"
+  end
+
 
   #PATH
   def assign(%Request{} = req, :path, %{path: path}) do
@@ -178,4 +182,12 @@ defmodule BusCar.Request do
     %{ req | body: "" }
   end
 
+end
+
+defimpl String.Chars, for: BusCar.Request do
+  def to_string(%BusCar.Request{} = req) do
+    req
+    |> BusCar.Request.to_uri
+    |> URI.to_string
+  end
 end
