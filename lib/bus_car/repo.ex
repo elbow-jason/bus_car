@@ -19,7 +19,11 @@ defmodule BusCar.Repo do
       end
 
       def do_get_all(mod, body, opts) do
-        case Api.get(%{path: mod.__struct__ |> Document.path, body: body}, opts) do
+        req = %{
+          path: (mod.__struct__ |> Document.path) ++ ["_search"],
+          body: body
+        }
+        case Api.get(req, opts) do
           result when result |> is_list -> Document.from_json(mod, result)
           {:error, reason} -> {:error, reason}
           _                -> {:error, :api_error}
@@ -44,20 +48,32 @@ defmodule BusCar.Repo do
 
       def insert(struct, opts \\ [])
       def insert(%{:__struct__ => mod, id: id} = struct, opts) do
-        Api.post(%{
+        ready_struct = struct |> mod.__before_insert__
+        resp = Api.post(%{
           query: %{op_type: "create"},
           path: struct |> Document.path,
-          body: struct |> mod.__before_insert__ |> Document.to_json,
+          body: ready_struct |> Document.to_json,
         }, opts)
-        |> handle_insert_response(mod)
+        handle_insert_response(resp, mod)
       end
 
-      defp handle_insert_response({:error, %{"error" => %{"type" => "document_already_exists" <> _}}}, _) do
+      defp handle_insert_response({:error, %{"status" => 409}}, _) do
+        # 409 == conflict
         {:error, :id_already_exists}
       end
-      defp handle_insert_response(mod, %{"created" => true} = map, mod) do
-        Document.from_json(mod, map)
+      defp handle_insert_response(%{"created" => true, "_id" => id} = map, mod) do
+        # read own write
+        case get(mod, id) do
+          %{__struct__: mod} = struct ->
+            struct
+          {:error, reason} ->
+            delete(mod, id)
+            {:error, reason}
+        end
       end
+      # defp handle_insert_response(%{"created" => true, "version" => vsn, "_id" => id} = map, _, struct) do
+      #   %{ struct | id: id, _version: vsn}
+      # end
 
 
       def update(%{__struct__: mod, _version: vsn} = struct, opts \\ []) do
@@ -76,11 +92,21 @@ defmodule BusCar.Repo do
       def delete(_, id, _) when id |> is_list do
         raise "#{__MODULE__} - must specify an id to delete"
       end
-      def delete(mod, id, opts) when id |> is_binary and id |> is_integer do
+      def delete(mod, id, opts) when id |> is_binary or id |> is_integer do
         case Api.delete(%{path: [mod.index, mod.doctype, id]}, opts) do
           %{"_id" => id}   -> :ok
           {:error, reason} -> {:error, reason}
           err              -> {:error, err}
+        end
+      end
+
+      def search(mod, query) when mod |> is_atom when query |> is_list do
+        case Search.search(mod, query) do
+          results when results |> is_list ->
+            results
+            |> Enum.map(fn item -> Document.from_json(mod, item) end)
+          x ->
+            {:error, x}
         end
       end
 

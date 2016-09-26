@@ -1,3 +1,3 @@
 defmodule Example.Repo do
-  use BusCar.Repo
+  use BusCar.Repo, opt_app: Example
 end
