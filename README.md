@@ -101,6 +101,8 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
   - [x] Term Dsl
   - [x] Document to DSL to Requests pipeline
   - [x] Ecto-ish Interface
+  - [ ] Api Tests
+  - [ ] Repo Interface Tests
   - [ ] Optimistic "Locking" on update
   - [ ] Make sure Repo uses `:otp_app` keyword arg
   - [ ] Full Functional Tests

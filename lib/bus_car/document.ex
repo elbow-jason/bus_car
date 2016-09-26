@@ -14,6 +14,7 @@ defmodule BusCar.Document do
       Module.put_attribute(__MODULE__, :internal_fields, :id)
       Module.put_attribute(__MODULE__, :internal_fields, :__struct__)
       Module.put_attribute(__MODULE__, :internal_fields, :_version)
+      Module.put_attribute(__MODULE__, :internal_fields, :_score)
 
       # CRUD hooks
       Module.register_attribute(__MODULE__, :before_inserts, accumulate: true)
@@ -88,14 +89,27 @@ defmodule BusCar.Document do
     end)
     |> Enum.map(fn item -> {item, Atom.to_string(item)} end)
     |> Enum.reduce(struct, fn({atom, string}, acc) -> Map.put(acc, atom, src[string]) end)
-    |> Map.put(:id, json["_id"])
-    |> Map.put(:_version, json["_version"])
+    |> append_internal_fields(mod, json)
   end
 
-  def to_json(%{:__struct__ => _} = struct) do
+  defp append_internal_fields(struct, mod, json) do
+    mod.internal_fields
+    |> Enum.filter(fn
+      :__struct__ -> false
+      :id -> false
+      _ -> true
+    end)
+    |> Enum.reduce(struct, fn (field, acc) ->
+      val = Map.get(json, field |> to_string)
+      Map.put(acc, field, val)
+    end)
+    |> Map.put(:id, json["_id"])
+  end
+
+  def to_json(%{:__struct__ => mod} = struct) do
     struct
     |> Map.from_struct
-    |> Map.drop([:id, :__struct__])
+    |> Map.drop([:__struct__ | mod.internal_fields ])
   end
 
   def path(%{:__struct__ => mod, id: id}) do
