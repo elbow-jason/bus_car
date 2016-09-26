@@ -3,11 +3,11 @@
 use Mix.Config
 
 config :bus_car, :default_api,
-  host: "localhost",
+  host: "127.0.0.1",
   port: 9200
 
 config :bus_car, :example,
-  host: "127.0.0.1",
+  host: "localhost",
   port: 9200
 
 # This configuration is loaded before any dependency and is restricted

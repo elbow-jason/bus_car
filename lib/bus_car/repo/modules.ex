@@ -5,7 +5,9 @@ defmodule BusCar.Repo.Modules do
       use BusCar.Repo.Config, otp_app: unquote(otp_app)
     end
     name = BusCar.Repo.Helpers.concat_names(mod, Config)
-    Module.create(name, contents, Macro.Env.location(__ENV__))
+    if !:erlang.function_exported(name, :module_info, 0) do
+      Module.create(name, contents, Macro.Env.location(__ENV__))
+    end
     name
   end
 
@@ -14,7 +16,9 @@ defmodule BusCar.Repo.Modules do
       use BusCar.Repo.Api, otp_app: unquote(otp_app)
     end
     name = BusCar.Repo.Helpers.concat_names(mod, Api)
-    Module.create(name, contents, Macro.Env.location(__ENV__))
+    if !:erlang.function_exported(name, :module_info, 0) do
+      Module.create(name, contents, Macro.Env.location(__ENV__))
+    end
     name
   end
 
@@ -23,7 +27,9 @@ defmodule BusCar.Repo.Modules do
       use BusCar.Repo.Search, api: unquote(api)
     end
     name = BusCar.Repo.Helpers.concat_names(mod, Search)
-    Module.create(name, contents, Macro.Env.location(__ENV__))
+    if !:erlang.function_exported(name, :module_info, 0) do
+      Module.create(name, contents, Macro.Env.location(__ENV__))
+    end
     name
   end
 
