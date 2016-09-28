@@ -84,9 +84,17 @@ defmodule BusCar.Repo do
       # defp handle_insert_response(%{"created" => true, "version" => vsn, "_id" => id} = map, _, struct) do
       #   %{ struct | id: id, _version: vsn}
       # end
+      def update(%{_version: nil}, opts \\ []) do
+        {:error, :cannot_update_with_nil_version}
+      end
 
+      def update(%{__struct__: mod, _version: vsn, id: id} = struct, opts) do
+        case @api.get(%{path: struct |> Document.path}) do
+          _ -> nil
+        end
+      end
 
-      def update(%{__struct__: mod, _version: vsn} = struct, opts \\ []) do
+      defp do_update(%{__struct__: mod, _version: vsn, id: id} = struct, opts \\ []) do
         # need optimistic locking on :_version here
         @api.put(%{
           path: struct |> Document.path,

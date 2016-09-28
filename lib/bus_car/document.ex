@@ -42,6 +42,7 @@ defmodule BusCar.Document do
             _           -> true
           end))
 
+
       @before_compile BusCar.Document
     end
   end
@@ -62,6 +63,14 @@ defmodule BusCar.Document do
         {struct, _} = @before_updates
           |> Enum.reduce({struct, []}, fn(func, {map, opts}) -> func.(map, opts) end)
         struct
+      end
+
+      @changeset @properties
+        |> Enum.map(fn %{name: key, type: val} -> {key, val} end)
+        |> Enum.into(%{})
+
+      def __changeset__ do
+        @changeset
       end
     end
   end
