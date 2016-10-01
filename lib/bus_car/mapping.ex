@@ -9,6 +9,7 @@ defmodule BusCar.Mapping do
     quote do
       import BusCar.Document
       import BusCar.Document.Timestamp
+      import Ecto.Changeset
     end
   end
 

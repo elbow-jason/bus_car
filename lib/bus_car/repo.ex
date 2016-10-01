@@ -81,24 +81,21 @@ defmodule BusCar.Repo do
             {:error, reason}
         end
       end
-      # defp handle_insert_response(%{"created" => true, "version" => vsn, "_id" => id} = map, _, struct) do
-      #   %{ struct | id: id, _version: vsn}
-      # end
-      def update(%{_version: nil}, opts \\ []) do
-        {:error, :cannot_update_with_nil_version}
+
+      def update(%Ecto.Changeset{} = cs, opts) do
+
       end
 
-      def update(%{__struct__: mod, _version: vsn, id: id} = struct, opts) do
-        case @api.get(%{path: struct |> Document.path}) do
-          _ -> nil
-        end
+      def update(_) do
+        raise "Repo.update only takes an Ecto.Changeset struct"
       end
 
       defp do_update(%{__struct__: mod, _version: vsn, id: id} = struct, opts \\ []) do
         # need optimistic locking on :_version here
         @api.put(%{
+          query: %{version: vsn},
           path: struct |> Document.path,
-          body: struct |> mod.__before_update__(opts) |> Document.to_json
+          body: struct |> mod.__before_update__(opts) |> Document.to_json,
         }, opts)
       end
 

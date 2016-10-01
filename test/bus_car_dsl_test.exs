@@ -37,7 +37,7 @@ defmodule BusCarDslTest do
         :query, :nested, :path, "comments",
           :query, :bool, :must,
             :match, "comments.message", "cool",
-            :match, "comments.author", "John",
+            :match, "comments.author",  "John",
     ]) == %{
       query: %{
         nested: %{
@@ -45,8 +45,8 @@ defmodule BusCarDslTest do
           query: %{
             bool: %{
               must: [
-                %{match: %{"comments.author" => %{query: "John"}}},
-                %{match: %{"comments.message" => %{query: "cool"}}}
+                %{match: %{"comments.author"  => %{query: "John"}}},
+                %{match: %{"comments.message" => %{query: "cool"}}},
               ]
             }
           }

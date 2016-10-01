@@ -4,7 +4,6 @@ defmodule BusCar.Document do
   defmacro document(index, doctype, block) do
     quote do
 
-
       Module.put_attribute(__MODULE__, :index, unquote(index |> Meta.index))
       Module.put_attribute(__MODULE__, :doctype, unquote(doctype |> Meta.doctype))
       Module.register_attribute(__MODULE__, :properties, accumulate: true)
