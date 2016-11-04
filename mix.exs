@@ -58,7 +58,7 @@ defmodule BusCar.Mixfile do
     [
       {:httpoison, "~> 0.9.1"},
       {:poison, "~> 2.2"},
-      {:ecto, "~> 2.1.0-rc.1"},
+      {:ecto, "~> 1.1.2"},
     ]
   end
 end

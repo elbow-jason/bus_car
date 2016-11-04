@@ -6,9 +6,6 @@ config :bus_car, :default_api,
   host: "127.0.0.1",
   port: 9200
 
-# config :bus_car, :example,
-#   host: "localhost",
-#   port: 9200
 
 import_config "#{Mix.env}.exs"
 
