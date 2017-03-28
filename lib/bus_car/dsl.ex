@@ -46,10 +46,6 @@ defmodule BusCar.Dsl do
 
   defmacro __using__(_opts) do
     quote do
-      # the_root = Dict.get(unquote(opts), :root)
-      # if not the_root do
-      #   raise "`use BusCar.Dsl` requires a `root: <key>` where key is the name of this module in the DSL"
-      # end
       alias BusCar.Dsl
       import BusCar.Dsl, only: [
         branch_list_rule: 2,

@@ -18,9 +18,9 @@ defmodule BusCar.Repo.Api do
         raise "BusCar.Repo.Api otp_app #{inspect @otp_app} is misconfigured"
       end
 
-      @protocol @cfg |> Dict.get(:protocol, "http")
-      @host     @cfg |> Dict.get(:host)
-      @port     @cfg |> Dict.get(:port)
+      @protocol @cfg |> Keyword.get(:protocol, "http")
+      @host     @cfg |> Keyword.get(:host)
+      @port     @cfg |> Keyword.get(:port)
       @headers  [{"Content-Type", "application/json"}]
 
       @default_map %{
@@ -35,9 +35,12 @@ defmodule BusCar.Repo.Api do
       def put(req, opts \\ []),    do: do_request(:put,    req, opts)
       def delete(req, opts \\ []), do: do_request(:delete, req, opts)
 
-      defp do_request(method, req, opts) do
+      defp do_request(method, req, opts) when req |> is_list do
+        do_request(method, req |> Enum.into(%{}), opts)
+      end
+      defp do_request(method, req, opts) when req |> is_map do
         req
-        |> Dict.put(:method, method)
+        |> Map.put(:method, method)
         |> request(opts)
       end
 
