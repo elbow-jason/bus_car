@@ -64,7 +64,7 @@ defmodule BusCar.Repo.Api do
 
       defp handle_response(resp, opts) do
         cond do
-          Dict.get(opts, :raw_response) == true  -> resp
+          Map.get(opts, :raw_response) == true  -> resp
           true                          -> resp |> destructure_response
         end
       end
