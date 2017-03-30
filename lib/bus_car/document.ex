@@ -1,4 +1,9 @@
 defmodule BusCar.Document do
+  @moduledoc """
+  BusCar.Document is the module that keeps track of BusCar.Document
+  metadata such as properties (see `BusCar.Document.property/3` macro) and
+
+  """
   alias BusCar.{Meta, Property, Document}
 
   defstruct [
@@ -63,8 +68,8 @@ defmodule BusCar.Document do
   defmacro __before_compile__(_opts) do
     quote do
 
-      def properties,      do: @properties
-      def internal_fields, do: @internal_fields
+      def __properties__,      do: @properties
+      def __internal_fields__, do: @internal_fields
 
       def __before_insert__(%{:__struct__ => __MODULE__} = struct, opts \\ []) do
         {struct, _} = @before_inserts
@@ -87,7 +92,6 @@ defmodule BusCar.Document do
       end
     end
   end
-
 
   defmacro property(name, type, opts \\ []) do
     quote do
