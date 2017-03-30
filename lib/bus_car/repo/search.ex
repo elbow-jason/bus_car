@@ -1,11 +1,13 @@
 defmodule BusCar.Repo.Search do
+
   defmacro __using__(opts) do
     quote do
       opts = unquote(opts)
       @repo opts |> Keyword.get(:repo)
-      if !@api do
+      if is_nil(@repo) do
         raise "BusCar.Repo.Search requires a :repo option when __using__"
       end
+      @api Module.concat(@repo, Api)
 
       def search do
         do_search(nil, nil, "")
@@ -17,7 +19,7 @@ defmodule BusCar.Repo.Search do
         search(mod.index, mod.doctype, dsl)
       end
       def search(index, doctype, terms) when terms |> is_list do
-        do_search(index, doctype, terms |> BusCar.Dsl.parse )
+        do_search(index, doctype, terms |> BusCarDsl.parse )
       end
       defp do_search(indices, doctype, terms) when indices |> is_list do
         do_search(indices |> Enum.join(","), doctype, terms)

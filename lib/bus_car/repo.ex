@@ -10,6 +10,7 @@ defmodule BusCar.Repo do
       otp_app = unquote(opts) |> Keyword.get(:otp_app)
       BusCar.Repo.Modules.define_config(__MODULE__, otp_app)
       BusCar.Repo.Modules.define_api(__MODULE__, otp_app)
+
       BusCar.Repo.Modules.define_search(__MODULE__)
       BusCar.Repo.Modules.define_explain(__MODULE__)
       BusCar.Repo.Modules.define_cat(__MODULE__)
@@ -20,6 +21,7 @@ defmodule BusCar.Repo do
       def api do
         @api
       end
+      @search Module.concat(__MODULE__, Search)
 
       def all(mod, query \\ [], _opts \\ [])
       def all(mod, [], opts) do
@@ -121,7 +123,7 @@ defmodule BusCar.Repo do
       end
 
       def search(mod, query) when mod |> is_atom when query |> is_list do
-        case Search.search(mod, query) do
+        case @search.search(mod, query) do
           results when results |> is_list ->
             results
             |> Enum.map(fn item -> Document.from_json(mod, item) end)

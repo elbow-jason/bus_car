@@ -8,7 +8,14 @@ defmodule BusCarRepoTest do
     :erlang.function_exported(mod, :module_info, 0)
   end
 
+  test "Repo is generated", do: assert exists?(TestRepo)
   test "Repo.Api is generated", do: assert exists?(TestRepo.Api)
+  test "Repo.Cat is generated", do: assert exists?(TestRepo.Cat)
+  test "Repo.Cluster is generated", do: assert exists?(TestRepo.Cluster)
   test "Repo.Config is generated", do: assert exists?(TestRepo.Config)
+  test "Repo.Explain is generated", do: assert exists?(TestRepo.Explain)
+  test "Repo.Index is generated", do: assert exists?(TestRepo.Index)
+  test "Repo.Search is generated", do: assert exists?(TestRepo.Search)
+  
   
 end
