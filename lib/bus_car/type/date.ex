@@ -1,5 +1,5 @@
 defmodule BusCar.Type.Date do
-  @behviour BusCar.Type
+  @behaviour BusCar.Type
   def type,       do: :date
   def properties, do: nil
 end

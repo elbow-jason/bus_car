@@ -7,11 +7,16 @@ defmodule BusCar.Repo do
       alias BusCar.{Document, Query}
       require Logger
       require BusCar.Repo.Modules
+      otp_app = unquote(opts) |> Keyword.get(:otp_app)
+      BusCar.Repo.Modules.define_config(__MODULE__, otp_app)
+      BusCar.Repo.Modules.define_api(__MODULE__, otp_app)
+      BusCar.Repo.Modules.define_search(__MODULE__)
+      BusCar.Repo.Modules.define_explain(__MODULE__)
+      BusCar.Repo.Modules.define_cat(__MODULE__)
+      BusCar.Repo.Modules.define_cluster(__MODULE__)
+      BusCar.Repo.Modules.define_index(__MODULE__)
 
-      BusCar.Repo.Modules.define_config(__MODULE__, unquote(opts) |> Keyword.get(:otp_app))
-      @api BusCar.Repo.Modules.define_api(__MODULE__, unquote(opts) |> Keyword.get(:otp_app))
-      BusCar.Repo.Modules.define_search(__MODULE__, @api)
-
+      @api Module.concat(__MODULE__, Api)
       def api do
         @api
       end
@@ -24,7 +29,7 @@ defmodule BusCar.Repo do
         do_get_all(mod, "", opts)
       end
       def all(mod, query, opts) when mod |> is_atom and query |> is_list do
-        do_get_all(mod, query |> BusCar.Dsl.parse, opts)
+        do_get_all(mod, query |> BusCarDsl.parse, opts)
       end
 
       def do_get_all(mod, body, opts) do

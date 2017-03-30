@@ -2,9 +2,9 @@ defmodule BusCar.Repo.Search do
   defmacro __using__(opts) do
     quote do
       opts = unquote(opts)
-      @api opts |> Keyword.get(:api)
+      @repo opts |> Keyword.get(:repo)
       if !@api do
-        raise "BusCar.Repo.Search requires an :api option when __using__"
+        raise "BusCar.Repo.Search requires a :repo option when __using__"
       end
 
       def search do

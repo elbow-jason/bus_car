@@ -1,5 +1,5 @@
 defmodule BusCar.Type.Float do
-  @behviour BusCar.Type
+  @behaviour BusCar.Type
   def type,       do: :float
   def properties, do: nil
 end

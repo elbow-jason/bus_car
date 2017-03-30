@@ -1,5 +1,5 @@
 defmodule BusCar.Type.Object do
-  @behviour BusCar.Type
+  @behaviour BusCar.Type
   def type,       do: :object
   def properties, do: nil
 end

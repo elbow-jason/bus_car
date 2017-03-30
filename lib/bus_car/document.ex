@@ -25,9 +25,9 @@ defmodule BusCar.Document do
       def type,       do: :object
       def mapping do
         %Mapping{
-          index: index,
+          index: index(),
           mappings: %{
-            doctype => %{
+            doctype() => %{
               :properties => Enum.reduce(@properties, %{}, &Property.to_mapping/2)
             }
           }

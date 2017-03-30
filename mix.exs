@@ -17,14 +17,13 @@ defmodule BusCar.Mixfile do
   defp apps do
     [
       :logger,
-      :httpoison,
     ]
   end
 
   def application do
     [
-      applications: apps,
-      mod: {BusCar, []},
+      extra_applications: apps(),
+      mod: {BusCar.Application, []},
     ]
   end
 
@@ -59,6 +58,7 @@ defmodule BusCar.Mixfile do
       {:httpoison, "~> 0.9.1"},
       {:poison, "~> 2.2"},
       {:ecto, "~> 2.0"},
+      {:bus_car_dsl, "~> 0.1.2"},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end

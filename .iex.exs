@@ -8,3 +8,7 @@ alias BusCar.Document
 
 alias Example.Repo
 alias Example.Doge
+
+defmodule ExampleRepo do
+  use BusCar.Repo, otp_app: :dev_example
+end

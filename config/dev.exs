@@ -1,5 +1,5 @@
 use Mix.Config
 
-# config :bus_car, :example,
-#   host: "localhost",
-#   port: 9200
+config :bus_car, :dev_example,
+  host: "localhost",
+  port: 9200

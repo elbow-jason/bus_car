@@ -6,7 +6,7 @@ defmodule BusCar.Repo.Api do
       alias BusCar.Request
       opts = unquote(opts)
       if !opts do
-        raise "BusCar.Repo.Api requires options. Got: #{inspect @opts}"
+        raise "BusCar.Repo.Api requires options. Got: #{inspect opts}"
       end
       @otp_app opts |> Keyword.get(:otp_app)
       if !@otp_app or !is_atom(@otp_app) do
@@ -64,7 +64,7 @@ defmodule BusCar.Repo.Api do
 
       defp handle_response(resp, opts) do
         cond do
-          Map.get(opts, :raw_response) == true  -> resp
+          Keyword.get(opts, :raw_response) == true  -> resp
           true                          -> resp |> destructure_response
         end
       end
@@ -142,10 +142,17 @@ defmodule BusCar.Repo.Api do
       defp ensure_success(%{"found" => true}) do
         :ok
       end
+      defp ensure_success(resp) when resp |> is_map do
+        # this clause may be too permissive.
+        :ok
+      end
+      defp ensure_success(resp) when resp |> is_list do
+        # this clause may be too permissive.
+        :ok
+      end
       defp ensure_success(err) do
         {:error, err}
       end
-
     end
   end
 end

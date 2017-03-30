@@ -1,5 +1,5 @@
 defmodule BusCar.Type.Short do
-  @behviour BusCar.Type
+  @behaviour BusCar.Type
   def type,       do: :short
   def properties, do: nil
 end
