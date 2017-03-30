@@ -1,17 +1,7 @@
 defmodule BusCar.Mapping do
-
-  defstruct [
-    index:    nil,
-    mappings: nil,
-  ]
-
-  defmacro __using__(_opts) do
-    quote do
-      import BusCar.Document
-      import BusCar.Document.Timestamp
-      import Ecto.Changeset
-    end
-  end
+  @moduledoc """
+  Mapping is the module which BusCar uses to keep track of
+  """
 
 
 

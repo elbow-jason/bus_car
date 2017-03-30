@@ -1,5 +1,19 @@
 defmodule BusCar.Document do
-  alias BusCar.{Meta, Property, Mapping}
+  alias BusCar.{Meta, Property, Document}
+
+  defstruct [
+    index:    nil,
+    mappings: nil,
+  ]
+
+  defmacro __using__(_opts) do
+    quote do
+      import BusCar.Document
+      import BusCar.Document.Timestamp
+      import Ecto.Changeset
+    end
+  end
+
 
   defmacro document(index, doctype, block) do
     quote do
@@ -24,7 +38,7 @@ defmodule BusCar.Document do
       def doctype,    do: @doctype
       def type,       do: :object
       def mapping do
-        %Mapping{
+        %Document{
           index: index(),
           mappings: %{
             doctype() => %{
@@ -77,7 +91,6 @@ defmodule BusCar.Document do
 
   defmacro property(name, type, opts \\ []) do
     quote do
-      #props = Module.get_attribute(__MODULE__, :properties) || []
       prop = Property.new(unquote(name), unquote(type), unquote(opts))
       Module.put_attribute(__MODULE__, :properties, prop)
     end
