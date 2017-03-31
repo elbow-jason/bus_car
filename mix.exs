@@ -4,7 +4,7 @@ defmodule BusCar.Mixfile do
   def project do
     [
       app: :bus_car,
-      version: "0.1.0",
+      version: "0.1.1",
       elixir: "~> 1.3",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
@@ -34,7 +34,7 @@ defmodule BusCar.Mixfile do
   end
 
   defp package do
-    [# These are the default files included in the package
+    [
       name: :bus_car,
       files: ["lib", "mix.exs", "README*", "LICENSE*",],
       maintainers: ["Jason Goldberger"],
@@ -43,16 +43,8 @@ defmodule BusCar.Mixfile do
         "GitHub" => "https://github.com/elbow-jason/bus_car",
       }
     ]
-   end
-  # Dependencies can be Hex packages:
-  #
-  #   {:mydep, "~> 0.3.0"}
-  #
-  # Or git/path repositories:
-  #
-  #   {:mydep, git: "https://github.com/elixir-lang/mydep.git", tag: "0.1.0"}
-  #
-  # Type "mix help deps" for more examples and options
+  end
+
   defp deps do
     [
       {:httpoison, "~> 0.9.1"},
