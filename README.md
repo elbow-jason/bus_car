@@ -104,7 +104,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
   - [x] Make sure Repo uses `:otp_app` keyword arg
   - [x] Request Tests
   - [x] Api Tests
-  - [ ] Repo Interface Tests
+  - [x] Repo Tests
   - [ ] Docs
   - [ ] Mappings Tests
   - [ ] Github Repo for Example Project and Advanced Examples

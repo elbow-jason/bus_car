@@ -1,10 +1,8 @@
 defmodule BusCarDslTest do
   use ExUnit.Case
-  doctest BusCar.Dsl
-  alias BusCar.Dsl
 
   test "multi bool" do
-    assert Dsl.parse([
+    assert BusCarDsl.parse([
       :query, :bool,
         :must,      :term,  :age,         33,
         :must_not,  :match, :name,        "beef",
@@ -33,7 +31,7 @@ defmodule BusCarDslTest do
 
 
   test "tirex example" do
-    assert Dsl.parse([
+    assert BusCarDsl.parse([
         :query, :nested, :path, "comments",
           :query, :bool, :must,
             :match, "comments.message", "cool",
@@ -71,7 +69,7 @@ defmodule BusCarDslTest do
         }
       }
     }
-    assert Dsl.parse([:query, :bool, :must, :match, "field", "term"]) == expected
+    assert BusCarDsl.parse([:query, :bool, :must, :match, "field", "term"]) == expected
   end
 
   test "query match _all <value>" do
@@ -82,7 +80,7 @@ defmodule BusCarDslTest do
         }
       }
     }
-    assert Dsl.parse([:query, :match, :_all, "value"]) == expected
+    assert BusCarDsl.parse([:query, :match, :_all, "value"]) == expected
   end
 
 end

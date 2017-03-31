@@ -6,7 +6,7 @@ defmodule BusCar.Repo.Api do
       alias BusCar.Request
       opts = unquote(opts)
       if !opts do
-        raise "BusCar.Repo.Api requires options. Got: #{inspect @opts}"
+        raise "BusCar.Repo.Api requires options. Got: #{inspect opts}"
       end
       @otp_app opts |> Keyword.get(:otp_app)
       if !@otp_app or !is_atom(@otp_app) do
@@ -18,9 +18,9 @@ defmodule BusCar.Repo.Api do
         raise "BusCar.Repo.Api otp_app #{inspect @otp_app} is misconfigured"
       end
 
-      @protocol @cfg |> Dict.get(:protocol, "http")
-      @host     @cfg |> Dict.get(:host)
-      @port     @cfg |> Dict.get(:port)
+      @protocol @cfg |> Keyword.get(:protocol, "http")
+      @host     @cfg |> Keyword.get(:host)
+      @port     @cfg |> Keyword.get(:port)
       @headers  [{"Content-Type", "application/json"}]
 
       @default_map %{
@@ -35,9 +35,12 @@ defmodule BusCar.Repo.Api do
       def put(req, opts \\ []),    do: do_request(:put,    req, opts)
       def delete(req, opts \\ []), do: do_request(:delete, req, opts)
 
-      defp do_request(method, req, opts) do
+      defp do_request(method, req, opts) when req |> is_list do
+        do_request(method, req |> Enum.into(%{}), opts)
+      end
+      defp do_request(method, req, opts) when req |> is_map do
         req
-        |> Dict.put(:method, method)
+        |> Map.put(:method, method)
         |> request(opts)
       end
 
@@ -61,7 +64,7 @@ defmodule BusCar.Repo.Api do
 
       defp handle_response(resp, opts) do
         cond do
-          Dict.get(opts, :raw_response) == true  -> resp
+          Keyword.get(opts, :raw_response) == true  -> resp
           true                          -> resp |> destructure_response
         end
       end
@@ -139,10 +142,17 @@ defmodule BusCar.Repo.Api do
       defp ensure_success(%{"found" => true}) do
         :ok
       end
+      defp ensure_success(resp) when resp |> is_map do
+        # this clause may be too permissive.
+        :ok
+      end
+      defp ensure_success(resp) when resp |> is_list do
+        # this clause may be too permissive.
+        :ok
+      end
       defp ensure_success(err) do
         {:error, err}
       end
-
     end
   end
 end

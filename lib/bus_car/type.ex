@@ -1,8 +1,6 @@
 defmodule BusCar.Type do
-  use Behaviour
-
-  defcallback type() :: atom
-  defcallback properties() :: map | nil
+  @callback type() :: atom
+  @callback properties() :: map | nil
 
   def aliased(key) do
     key

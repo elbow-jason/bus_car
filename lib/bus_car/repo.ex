@@ -7,14 +7,21 @@ defmodule BusCar.Repo do
       alias BusCar.{Document, Query}
       require Logger
       require BusCar.Repo.Modules
+      otp_app = unquote(opts) |> Keyword.get(:otp_app)
+      BusCar.Repo.Modules.define_config(__MODULE__, otp_app)
+      BusCar.Repo.Modules.define_api(__MODULE__, otp_app)
 
-      BusCar.Repo.Modules.define_config(__MODULE__, unquote(opts) |> Keyword.get(:otp_app))
-      @api BusCar.Repo.Modules.define_api(__MODULE__, unquote(opts) |> Keyword.get(:otp_app))
-      BusCar.Repo.Modules.define_search(__MODULE__, @api)
+      BusCar.Repo.Modules.define_search(__MODULE__)
+      BusCar.Repo.Modules.define_explain(__MODULE__)
+      BusCar.Repo.Modules.define_cat(__MODULE__)
+      BusCar.Repo.Modules.define_cluster(__MODULE__)
+      BusCar.Repo.Modules.define_index(__MODULE__)
 
+      @api Module.concat(__MODULE__, Api)
       def api do
         @api
       end
+      @search Module.concat(__MODULE__, Search)
 
       def all(mod, query \\ [], _opts \\ [])
       def all(mod, [], opts) do
@@ -24,7 +31,7 @@ defmodule BusCar.Repo do
         do_get_all(mod, "", opts)
       end
       def all(mod, query, opts) when mod |> is_atom and query |> is_list do
-        do_get_all(mod, query |> BusCar.Dsl.parse, opts)
+        do_get_all(mod, query |> BusCarDsl.parse, opts)
       end
 
       def do_get_all(mod, body, opts) do
@@ -116,13 +123,22 @@ defmodule BusCar.Repo do
       end
 
       def search(mod, query) when mod |> is_atom when query |> is_list do
-        case Search.search(mod, query) do
+        case @search.search(mod, query) do
           results when results |> is_list ->
             results
             |> Enum.map(fn item -> Document.from_json(mod, item) end)
           x ->
             {:error, x}
         end
+      end
+
+      def mapping(mod) do
+        fields = mod.mapping()
+        %{
+          path: [to_string(fields.index)],
+          body: %{mappings: fields.mappings}
+        }
+        |> @api.put
       end
 
     end

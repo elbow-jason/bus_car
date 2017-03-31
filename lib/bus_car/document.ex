@@ -1,5 +1,24 @@
 defmodule BusCar.Document do
-  alias BusCar.{Meta, Property, Mapping}
+  @moduledoc """
+  BusCar.Document is the module that keeps track of BusCar.Document
+  metadata such as properties (see `BusCar.Document.property/3` macro) and
+
+  """
+  alias BusCar.{Meta, Property, Document}
+
+  defstruct [
+    index:    nil,
+    mappings: nil,
+  ]
+
+  defmacro __using__(_opts) do
+    quote do
+      import BusCar.Document
+      import BusCar.Document.Timestamp
+      import Ecto.Changeset
+    end
+  end
+
 
   defmacro document(index, doctype, block) do
     quote do
@@ -21,13 +40,16 @@ defmodule BusCar.Document do
       unquote(block)
 
       def index,      do: @index
+
       def doctype,    do: @doctype
+
       def type,       do: :object
+
       def mapping do
-        %Mapping{
-          index: index,
+        %Document{
+          index: index(),
           mappings: %{
-            doctype => %{
+            @doctype => %{
               :properties => Enum.reduce(@properties, %{}, &Property.to_mapping/2)
             }
           }
@@ -49,8 +71,8 @@ defmodule BusCar.Document do
   defmacro __before_compile__(_opts) do
     quote do
 
-      def properties,      do: @properties
-      def internal_fields, do: @internal_fields
+      def __properties__,      do: @properties
+      def __internal_fields__, do: @internal_fields
 
       def __before_insert__(%{:__struct__ => __MODULE__} = struct, opts \\ []) do
         {struct, _} = @before_inserts
@@ -74,10 +96,8 @@ defmodule BusCar.Document do
     end
   end
 
-
   defmacro property(name, type, opts \\ []) do
     quote do
-      #props = Module.get_attribute(__MODULE__, :properties) || []
       prop = Property.new(unquote(name), unquote(type), unquote(opts))
       Module.put_attribute(__MODULE__, :properties, prop)
     end
