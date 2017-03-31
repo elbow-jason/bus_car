@@ -4,8 +4,8 @@ defmodule BusCar.Mixfile do
   def project do
     [
       app: :bus_car,
-      version: "0.1.1",
-      elixir: "~> 1.3",
+      version: "0.2.0",
+      elixir: "~> 1.4",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       description: description(),
