@@ -4,6 +4,7 @@ defmodule BusCarDocumentTest.Doggy do
   document "animal", "dog" do
     property :name, :string
     property :age,  :integer
+    property :is_hairy,  :bool, default: false
   end
 
 end
@@ -26,7 +27,13 @@ defmodule BusCarDocumentTest do
   end
 
   test "document has the correct number of properties" do
-    assert Doggy.__properties__ |> length == 2
+    assert Doggy.__properties__ |> length == 3
+  end
+
+  test "document has the correct properties" do
+    assert Doggy.__properties__ |> Enum.at(0) == %BusCar.Property{name: :is_hairy, options: [default: false], type: :bool}
+    assert Doggy.__properties__ |> Enum.at(1) == %BusCar.Property{name: :age, options: [], type: :integer}
+    assert Doggy.__properties__ |> Enum.at(2) == %BusCar.Property{name: :name, options: [], type: :string}
   end
 
   test "document mapping returns a valid Elasticsearch mapping" do
@@ -35,8 +42,9 @@ defmodule BusCarDocumentTest do
       mappings: %{
         dog: %{
           properties: %{
-            age: %{type:  :integer},
-            name: %{type: :string},
+            age:      %{type:  :integer},
+            name:     %{type: :string},
+            is_hairy: %{type: :bool}
           }
         }
       }

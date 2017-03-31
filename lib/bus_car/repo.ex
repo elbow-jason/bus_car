@@ -132,6 +132,16 @@ defmodule BusCar.Repo do
         end
       end
 
+      def mapping(mod) do
+        fields = mod.mapping()
+        %{
+          path: [to_string(fields.index)],
+          body: fields.mappings,
+        }
+        |> IO.inspect
+        |> @api.put
+      end
+
     end
   end
 

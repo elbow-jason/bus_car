@@ -40,13 +40,16 @@ defmodule BusCar.Document do
       unquote(block)
 
       def index,      do: @index
+
       def doctype,    do: @doctype
+
       def type,       do: :object
+
       def mapping do
         %Document{
           index: index(),
           mappings: %{
-            doctype() => %{
+            @doctype => %{
               :properties => Enum.reduce(@properties, %{}, &Property.to_mapping/2)
             }
           }
