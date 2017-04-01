@@ -121,7 +121,7 @@ defmodule BusCar.Document do
   end
 
   defp append_internal_fields(struct, mod, json) do
-    mod.internal_fields
+    mod.__internal_fields__()
     |> Enum.filter(fn
       :__struct__ -> false
       :id -> false
@@ -137,7 +137,7 @@ defmodule BusCar.Document do
   def to_json(%{:__struct__ => mod} = struct) do
     struct
     |> Map.from_struct
-    |> Map.drop([:__struct__ | mod.internal_fields ])
+    |> Map.drop([:__struct__ | mod.__internal_fields__() ])
   end
 
   def path(%{:__struct__ => mod, id: id}) do
