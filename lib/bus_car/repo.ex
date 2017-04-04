@@ -18,10 +18,12 @@ defmodule BusCar.Repo do
       BusCar.Repo.Modules.define_index(__MODULE__)
 
       @api Module.concat(__MODULE__, Api)
+      @query Module.concat(__MODULE__, Query)
+      @search Module.concat(__MODULE__, Search)
       def api do
         @api
       end
-      @search Module.concat(__MODULE__, Search)
+      
 
       def all(mod, query \\ [], _opts \\ [])
       def all(mod, [], opts) do
@@ -60,7 +62,7 @@ defmodule BusCar.Repo do
 
       def get_by(mod, map, opts \\ [])
       def get_by(mod, map, opts) when map |> is_map do
-        all(mod, map |> Query.from_map, opts)
+        all(mod, map |> @query.from_map, opts)
       end
 
       def insert(struct, opts \\ [])
