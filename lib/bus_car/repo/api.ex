@@ -2,8 +2,10 @@ defmodule BusCar.Repo.Api do
 
   defmacro __using__(opts) do
     quote do
-      require Logger
+
+      use Slogger, level: :info
       alias BusCar.Request
+
       opts = unquote(opts)
       if !opts do
         raise "BusCar.Repo.Api requires options. Got: #{inspect opts}"
@@ -86,14 +88,14 @@ defmodule BusCar.Repo.Api do
       defp failure(err) when err |> is_binary do
         case err |> Poison.decode do
           {:ok, json} ->
-            Logger.error("""
+            Slogger.error("""
             [MODULE] #{__MODULE__}
             [ERROR]  API Response Error
             [REASON] #{inspect json}
             """)
             {:error, json}
           {:error, reason} ->
-            Logger.error("""
+            Slogger.error("""
             [MODULE]      #{__MODULE__}
             [ERROR]       API Response Error
             [REASON]      Failure To Decode JSON

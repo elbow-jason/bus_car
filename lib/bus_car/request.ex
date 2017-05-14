@@ -1,6 +1,6 @@
 defmodule BusCar.Request do
   alias BusCar.Request
-  require Logger
+  use Slogger
 
   @json_headers [{"Content-Type", "application/json"}]
   @methods      [:get, :put, :post, :delete]
@@ -31,7 +31,7 @@ defmodule BusCar.Request do
 
   def send(%Request{method: method, body: body, headers: headers} = req, opts \\ []) when body |> is_binary do
     url = req |> Request.url
-    Logger.debug("""
+    Slogger.debug("""
 
     ===> Sending Request ===> ===> ===>
     [MODULE]  #{__MODULE__}
@@ -43,7 +43,7 @@ defmodule BusCar.Request do
     [END]
     """)
     {status, resp} = HTTPoison.request(method, url, body, headers, opts)
-    Logger.debug("""
+    Slogger.debug("""
 
     <=== Received Response <=== <=== <===
     [MODULE]  #{__MODULE__}

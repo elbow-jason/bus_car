@@ -15,7 +15,7 @@ defmodule BusCar.Document do
     quote do
       import BusCar.Document
       import BusCar.Document.Timestamp
-      import Ecto.Changeset
+      import BusCar.Changeset
     end
   end
 
@@ -142,6 +142,13 @@ defmodule BusCar.Document do
 
   def path(%{:__struct__ => mod, id: id}) do
     [mod.index, mod.doctype, id]
+  end
+
+  def index(%{:__struct__ => mod}) do
+    index(mod)
+  end
+  def index(mod) when is_atom(mod) do
+    mod.index
   end
 
   def remove_nils(%{:__struct__ => _} = struct) do

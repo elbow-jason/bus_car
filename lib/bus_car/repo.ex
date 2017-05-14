@@ -1,11 +1,12 @@
 defmodule BusCar.Repo do
-  alias BusCar.Search
 
   defmacro __using__(opts) do
     quote do
 
-      alias BusCar.{Document, Query}
-      require Logger
+      alias BusCar.{
+        Document,
+        Changeset,
+      }
       require BusCar.Repo.Modules
       otp_app = unquote(opts) |> Keyword.get(:otp_app)
       BusCar.Repo.Modules.define_config(__MODULE__, otp_app)
@@ -17,8 +18,8 @@ defmodule BusCar.Repo do
       BusCar.Repo.Modules.define_cluster(__MODULE__)
       BusCar.Repo.Modules.define_index(__MODULE__)
 
-      @api Module.concat(__MODULE__, Api)
-      @query Module.concat(__MODULE__, Query)
+      @api    Module.concat(__MODULE__, Api)
+      @query  BusCar.Query
       @search Module.concat(__MODULE__, Search)
       def api do
         @api
@@ -62,7 +63,12 @@ defmodule BusCar.Repo do
 
       def get_by(mod, map, opts \\ [])
       def get_by(mod, map, opts) when map |> is_map do
-        all(mod, map |> @query.from_map, opts)
+        case all(mod, map |> @query.from_map, opts) do
+          [] -> nil
+          [one] -> one
+          x when length(x) > 1 ->
+            raise "More than one entry found. Got #{length(x)} entries."
+        end
       end
 
       def insert(struct, opts \\ [])
@@ -91,12 +97,14 @@ defmodule BusCar.Repo do
         end
       end
 
-      def update(%Ecto.Changeset{} = cs, opts) do
+      def update(%Changeset{valid?: true} = cs, opts) do
 
       end
 
-      def update(_) do
-        raise "Repo.update only takes an Ecto.Changeset struct"
+      def update!(_) do
+        raise %ArgumentError{
+          message: "Repo.update only takes a validated Ecto.Changeset struct"
+        }  
       end
 
       defp do_update(%{__struct__: mod, _version: vsn, id: id} = struct, opts \\ []) do
@@ -124,6 +132,12 @@ defmodule BusCar.Repo do
         end
       end
 
+      def delete_index(mod) when is_atom(mod) do
+        @api.delete(%{
+          path: [mod.index]
+        })
+      end
+
       def search(mod, query) when mod |> is_atom when query |> is_list do
         case @search.search(mod, query) do
           results when results |> is_list ->
@@ -134,13 +148,26 @@ defmodule BusCar.Repo do
         end
       end
 
-      def mapping(mod) do
+      def put_mapping(mod) do
         fields = mod.mapping()
         %{
-          path: [to_string(fields.index)],
-          body: %{mappings: fields.mappings}
+          path: [
+            to_string(fields.index),
+          ],
+          body: fields,
         }
         |> @api.put
+      end
+
+      def get_mapping(mod) do
+        %{
+          path: [
+            to_string(mod.index),
+            to_string(mod.doctype),
+            "_mapping",
+          ],
+        }
+        |> @api.get
       end
 
     end

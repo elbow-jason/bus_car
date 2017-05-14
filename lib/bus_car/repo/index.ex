@@ -9,14 +9,14 @@ defmodule BusCar.Repo.Index do
       end
       @api Module.concat(@repo, Api)
 
-      require Logger
+      use Slogger
 
       def new_index(name, body \\ "") when name |> is_binary do
         case @api.put(%{path: "/" <> name, body: body}, raw_response: true) do
           {:ok, %{status_code: 400}} -> {:error, :already_exists}
           {:ok, %{status_code: 200}} -> :ok
           err ->
-            Logger.error("new_index failure #{inspect err}")
+            Slogger.error("new_index failure #{inspect err}")
             {:error, :internal_error}
         end
       end

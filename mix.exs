@@ -48,10 +48,10 @@ defmodule BusCar.Mixfile do
   defp deps do
     [
       {:httpoison, "~> 0.9.1"},
-      {:poison, "~> 2.2"},
-      {:ecto, "~> 2.0"},
+      {:poison, "~> 2.0 or ~> 3.0"},
       {:bus_car_dsl, "~> 0.1.2"},
-      {:ex_doc, ">= 0.0.0", only: :dev}
+      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:slogger, "~> 0.1.6"},
     ]
   end
 end

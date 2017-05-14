@@ -11,7 +11,7 @@ end
 
 defmodule BusCarDocumentTest do
   use ExUnit.Case
-  doctest BusCar
+  doctest BusCar.Document
   alias BusCarDocumentTest.Doggy
 
   test "document macro gives a valid index" do
