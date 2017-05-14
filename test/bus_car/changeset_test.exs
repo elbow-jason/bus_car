@@ -31,16 +31,35 @@ defmodule BusCarChangesetTest do
     refute Map.has_key?(new_changeset.changes, :other)
   end
 
-  test "validate_required allows unrequired field to pass but required fields cannot be blank" do
+ test "uncast returns ok tuple" do
+    changes = %{
+      name: "ruby",
+      favorite_color: "red",
+    }
+    {:ok, result} = 
+      %Kitty{}
+      |> Changeset.cast(changes, [:name, :favorite_color])
+      |> Changeset.uncast
+    assert result.name == "ruby"
+    assert result.favorite_color == "red"
+  end
+
+  test "validate_required fields cannot be blank" do
     model = %Kitty{}
     changes = %{
-      name: "fleep",
+      name: nil,
       favorite_color: "red",
       other: "fasdasjd",
     }
     allowed = [:name, :favorite_color]
-    model
-    |> Changeset.cast(changes, allowed)
-    |> Changeset.validate_required([:name])
+    result = 
+      model
+      |> Changeset.cast(changes, allowed)
+      |> Changeset.validate_required([:name])
+      |> Changeset.uncast
+    assert result |> elem(0)
+    cs = result |> elem(1)
+    assert (cs.errors |> hd |> elem(0)) == :name
+    assert (cs.errors |> hd |> elem(1)) == :cannot_be_blank
   end
 end

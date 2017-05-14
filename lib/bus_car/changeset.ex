@@ -31,7 +31,9 @@ defmodule BusCar.Changeset do
   def uncast(%Cs{model: model, changes: changes} = cs) do
     case check_validity(cs) do
       %{valid?: true} ->
-        {:ok, changes |> Enum.map(fn {k, v} -> Map.put(model, k, v) end) }
+        {:ok, changes |> Enum.reduce(model, fn
+          ({k, v}, model_acc) -> Map.put(model_acc, k, v)
+        end)}
       _ -> 
         {:error, cs}
     end
