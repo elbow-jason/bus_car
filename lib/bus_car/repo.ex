@@ -97,14 +97,36 @@ defmodule BusCar.Repo do
         end
       end
 
+      def update(cs, opts \\ [])
       def update(%Changeset{valid?: true} = cs, opts) do
-
+        check_and_set(cs, opts)
+      end
+      def update(%Changeset{} = cs, opts) do
+        {:error, cs}
       end
 
-      def update!(_) do
-        raise %ArgumentError{
-          message: "Repo.update only takes a validated Ecto.Changeset struct"
-        }  
+
+      defp check_and_set(%Changeset{} = cs, opts) do
+        model = cs |> BusCar.Changeset.apply_changes
+        next_version = model._version + 1
+        case attempt_update(model, opts) do
+          {:error, %{"status" => 409}} ->
+            new_model = get(model.__struct__, model.id)
+            check_and_set(%{ cs | model: new_model}, opts)
+          %{"_version" => ^next_version} ->
+            get(model.__struct__, model.id)
+        end
+      end
+
+      defp attempt_update(%{__struct__: module} = model, opts) do
+        req = %{
+          path: [module.index, module.doctype, model.id],
+          query: %{
+            version: model._version,
+          },
+          body: model |> module.__before_update__ |> Document.to_json,
+        }
+        @api.put(req, opts)
       end
 
       defp do_update(%{__struct__: mod, _version: vsn, id: id} = struct, opts \\ []) do

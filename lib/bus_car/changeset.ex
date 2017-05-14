@@ -14,10 +14,10 @@ defmodule BusCar.Changeset do
     %{ cs | errors: [ new_error | errors ]}
   end
 
-  defp check_validity(%Cs{errors: []} = cs) do
+  def check_validity(%Cs{errors: []} = cs) do
     %{ cs | valid?: true }
   end
-  defp check_validity(%Cs{errors: errors} = cs) when length(errors) > 0 do
+  def check_validity(%Cs{errors: errors} = cs) when length(errors) > 0 do
     %{ cs | valid?: false }
   end
 
@@ -28,12 +28,17 @@ defmodule BusCar.Changeset do
     }
   end
 
-  def uncast(%Cs{model: model, changes: changes} = cs) do
+  def apply_changes(%Cs{model: model, changes: changes}) do
+    changes
+    |> Enum.reduce(model, fn ({k, v}, model_acc) ->
+      Map.put(model_acc, k, v)
+    end)
+  end
+
+  def uncast(%Cs{} = cs) do
     case check_validity(cs) do
       %{valid?: true} ->
-        {:ok, changes |> Enum.reduce(model, fn
-          ({k, v}, model_acc) -> Map.put(model_acc, k, v)
-        end)}
+        {:ok, apply_changes(cs)}
       _ -> 
         {:error, cs}
     end
