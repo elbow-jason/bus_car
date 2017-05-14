@@ -46,8 +46,8 @@ defmodule BusCarRepoTest do
   test "Repo.all/2 exists", do: assert exists?(Repo, :all, 2)
   test "Repo.all/3 exists", do: assert exists?(Repo, :all, 3)
 
-  test "Repo.get_by/2 exists", do: assert exists?(Repo, :get_by, 2)
-  test "Repo.get_by/3 exists", do: assert exists?(Repo, :get_by, 3)
+  # test "Repo.get_by/2 exists", do: assert exists?(Repo, :get_by, 2)
+  # test "Repo.get_by/3 exists", do: assert exists?(Repo, :get_by, 3)
 
   test "Repo.insert/1 exists", do: assert exists?(Repo, :insert, 1)
   test "Repo.insert/2 exists", do: assert exists?(Repo, :insert, 2)
@@ -58,15 +58,15 @@ defmodule BusCarRepoTest do
   test "Repo.delete/2 exists", do: assert exists?(Repo, :delete, 2)
   test "Repo.delete/3 exists", do: assert exists?(Repo, :delete, 3)
 
-  test "Repo.get_by works" do
-    name = "doggy-123" <> "-#{:rand.uniform}"
-    inserted = Repo.insert(%Doggy{name: name})
-    assert inserted.name == name
-    found = Repo.get_by(Doggy, %{name: name})
-    assert found != nil
-    assert found.age == 1
-    Repo.delete(found.id)
-  end
+  # test "Repo.get_by works" do
+  #   name = "doggy-123" <> "-#{:rand.uniform}"
+  #   inserted = Repo.insert(%Doggy{name: name})
+  #   assert inserted.name == name
+  #   found = Repo.get_by(Doggy, %{name: name})
+  #   assert found != nil
+  #   assert found.age == 1
+  #   Repo.delete(found.id)
+  # end
 
   test "Repo.get_mapping works" do
     assert Repo.get_mapping(Doggy) == %{"test_animal" => %{"mappings" => %{"test_dog_repo" => %{"properties" => %{"name" => %{"type" => "string"}, "age" => %{"type" => "integer"}, "is_hairy" => %{"type" => "boolean"}}}}}}

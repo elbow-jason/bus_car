@@ -61,15 +61,15 @@ defmodule BusCar.Repo do
         end
       end
 
-      def get_by(mod, map, opts \\ [])
-      def get_by(mod, map, opts) when map |> is_map do
-        case all(mod, map |> @query.from_map, opts) do
-          [] -> nil
-          [one] -> one
-          x when length(x) > 1 ->
-            raise "More than one entry found. Got #{length(x)} entries."
-        end
-      end
+      # def get_by(mod, map, opts \\ [])
+      # def get_by(mod, map, opts) when map |> is_map do
+      #   case all(mod, map |> @query.from_map, opts) do
+      #     [] -> nil
+      #     [one] -> one
+      #     x when length(x) > 1 ->
+      #       raise "More than one entry found. Got #{length(x)} entries."
+      #   end
+      # end
 
       def insert(struct, opts \\ [])
       def insert(%{:__struct__ => mod, id: id} = struct, opts) do
