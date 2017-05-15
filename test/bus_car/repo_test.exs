@@ -68,8 +68,35 @@ defmodule BusCarRepoTest do
   #   Repo.delete(found.id)
   # end
 
+  test "Repo.update works" do
+    my_dog = %Doggy{
+      name: "fred",
+      age: 1,
+    } |> BusCarTestRepo.insert
+    changes = %{name: "bread"}
+    cs =
+      my_dog
+      |> BusCar.Changeset.cast(changes, [:name, :age])
+      |> BusCar.Changeset.check_validity
+    updated = BusCarTestRepo.update(cs)
+    assert updated.name == "bread"
+  end
+
   test "Repo.get_mapping works" do
-    assert Repo.get_mapping(Doggy) == %{"test_animal" => %{"mappings" => %{"test_dog_repo" => %{"properties" => %{"name" => %{"type" => "string"}, "age" => %{"type" => "integer"}, "is_hairy" => %{"type" => "boolean"}}}}}}
+    expected = %{
+      "test_animal" => %{
+        "mappings" => %{
+          "test_dog_repo" => %{
+            "properties" => %{
+              "name" => %{"type" => "string"},
+              "age" => %{"type" => "integer"},
+              "is_hairy" => %{"type" => "boolean"},
+            }
+          }
+        }
+      }
+    }
+    assert Repo.get_mapping(Doggy) == expected
   end
 
   test "Repo.put_mapping works" do
