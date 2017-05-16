@@ -98,13 +98,13 @@ end
   - [x] Api Tests
   - [x] Repo Tests
   - [ ] Docs
-  - [ ] Mappings Tests
+  - [x] Mappings Tests
   - [ ] Github Repo for Example Project and Advanced Examples
-  - [ ] Optimistic "Locking" on update
+  - [x] Optimistic "Locking" on update
   - [ ] Full Functional Tests
   - [ ] Geo Dsl
   - [ ] MoreLikeThis Query
   - [ ] Upsert
-  - [ ] Hex.pm
+  - [x] Hex.pm
   - [ ] DB Connection Pooling?
   - [x] Extract BusCar DSL into its own Repo

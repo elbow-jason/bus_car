@@ -86,16 +86,20 @@ defmodule BusCar.Repo do
         # 409 == conflict
         {:error, :id_already_exists}
       end
+      defp handle_insert_response({:error, _} = err) do
+        err
+      end
       defp handle_insert_response(%{"created" => true, "_id" => id} = map, mod) do
         # read own write
         case get(mod, id) do
           %{__struct__: mod} = struct ->
             struct
-          {:error, reason} ->
+          {:error, _} = err ->
             delete(mod, id)
-            {:error, reason}
+            err
         end
       end
+
 
       def update(cs, opts \\ [])
       def update(%Changeset{valid?: true} = cs, opts) do

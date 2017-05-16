@@ -4,7 +4,7 @@ defmodule BusCar.Mixfile do
   def project do
     [
       app: :bus_car,
-      version: "0.2.3",
+      version: "0.2.4",
       elixir: "~> 1.4",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
@@ -47,7 +47,7 @@ defmodule BusCar.Mixfile do
 
   defp deps do
     [
-      {:httpoison, "~> 0.9.1"},
+      {:httpoison, "~> 0.9.1 or ~> 0.10.0 or ~> 0.11.0"},
       {:poison, "~> 2.0 or ~> 3.0"},
       {:bus_car_dsl, "~> 0.1.2"},
       {:ex_doc, ">= 0.0.0", only: :dev},
