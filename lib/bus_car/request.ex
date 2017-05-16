@@ -1,6 +1,6 @@
 defmodule BusCar.Request do
   alias BusCar.Request
-  use Slogger
+  use Slogger, level: :info
 
   @json_headers [{"Content-Type", "application/json"}]
   @methods      [:get, :put, :post, :delete]
