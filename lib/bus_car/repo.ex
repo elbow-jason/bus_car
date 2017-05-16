@@ -86,7 +86,7 @@ defmodule BusCar.Repo do
         # 409 == conflict
         {:error, :id_already_exists}
       end
-      defp handle_insert_response({:error, _} = err) do
+      defp handle_insert_response({:error, _} = err, _) do
         err
       end
       defp handle_insert_response(%{"created" => true, "_id" => id} = map, mod) do
