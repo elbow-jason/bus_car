@@ -55,7 +55,9 @@ defmodule BusCar.Repo do
         get(mod, id |> Integer.to_string, opts )
       end
       def get(mod, id, opts) when id |> is_binary do
-        req = %{path: [mod.index, mod.doctype, id]}
+        req = %{
+          path: [mod.index, mod.doctype, id]
+        }
         case @api.get(req, opts) do
           {:error, reason} -> {:error, reason}
           result           -> Document.from_json(mod, result)

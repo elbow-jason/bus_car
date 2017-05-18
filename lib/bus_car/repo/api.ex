@@ -85,6 +85,9 @@ defmodule BusCar.Repo.Api do
       defp failure(%{body: body}) do
         failure(body)
       end
+      defp failure(%{reason: reason}) do
+        {:error, reason}
+      end
       defp failure(err) when err |> is_binary do
         case err |> Poison.decode do
           {:ok, json} ->
