@@ -67,7 +67,7 @@ defmodule BusCar.Repo.Api do
       defp handle_response(resp, opts) do
         cond do
           Keyword.get(opts, :raw_response) == true  -> resp
-          true                          -> resp |> destructure_response
+          true -> resp |> destructure_response
         end
       end
 

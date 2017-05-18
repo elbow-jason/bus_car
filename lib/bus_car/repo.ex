@@ -44,8 +44,9 @@ defmodule BusCar.Repo do
         }
         case @api.get(req, opts) do
           result when result |> is_list -> Document.from_json(mod, result)
-          {:error, reason} -> {:error, reason}
-          _                -> {:error, :api_error}
+          {:ok, resp} -> {:ok, resp}
+          err ->
+            err
         end
       end
 
