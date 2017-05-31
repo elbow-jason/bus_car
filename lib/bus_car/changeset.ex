@@ -24,9 +24,9 @@ defmodule BusCar.Changeset do
   def cast(model, changes, allowed_fields) do
     %Cs{
       model: model,
-      changes: Map.take(changes, allowed_fields)
+      changes: changes |> GenUtil.Map.to_atom_keys |> Map.take(allowed_fields)
     }
-  end
+  end 
 
   def apply_changes(%Cs{model: model, changes: changes}) do
     changes

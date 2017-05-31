@@ -52,6 +52,7 @@ defmodule BusCar.Mixfile do
       {:bus_car_dsl, "~> 0.1.2"},
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:slogger, "~> 0.1.6"},
+      {:gen_util, github: "elbow-jason/gen_util"},
     ]
   end
 end

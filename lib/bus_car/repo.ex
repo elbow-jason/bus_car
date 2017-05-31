@@ -75,6 +75,14 @@ defmodule BusCar.Repo do
       # end
 
       def insert(struct, opts \\ [])
+      def insert(%Changeset{} = cs, opts) do
+        case Changeset.uncast(cs) do
+          {:ok, model} ->
+            insert(model, opts)
+          {:error, cs} ->
+            {:error, cs}
+        end
+      end
       def insert(%{:__struct__ => mod, id: id} = struct, opts) do
         %{
           query: %{op_type: "create"},
@@ -105,8 +113,13 @@ defmodule BusCar.Repo do
 
 
       def update(cs, opts \\ [])
-      def update(%Changeset{valid?: true} = cs, opts) do
-        check_and_set(cs, opts)
+      def update(%Changeset{} = cs, opts) do
+        case Changeset.check_validity(cs) do
+          %{valid?: true} = cs ->
+            check_and_set(cs, opts)
+          %{valid?: false} = cs ->
+            {:error, cs}
+        end
       end
       def update(%Changeset{} = cs, opts) do
         {:error, cs}

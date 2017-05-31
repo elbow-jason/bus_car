@@ -11,7 +11,13 @@ defmodule BusCarRepoTestDoggy do
     property :is_hairy,   :boolean, default: false
   end
 
+  def changeset(model, changes) do
+    model
+    |> cast(changes, [:name, :age, :is_hairy])
+    |> validate_required([:name])
+  end
 end
+
 defmodule BusCarRepoTest do
   use ExUnit.Case
   alias BusCarTestRepo, as: Repo
@@ -102,6 +108,22 @@ defmodule BusCarRepoTest do
   test "Repo.put_mapping works" do
     assert Repo.delete_index(Doggy) == %{"acknowledged" => true}
     assert Repo.put_mapping(Doggy)  == %{"acknowledged" => true}
+  end
+
+  test "Repo.insert works with a changeset" do
+    c1 =
+      %Doggy{}
+      |> Doggy.changeset(%{"name" => "melbo", "age" => 10, "is_hairy" => true})
+      |> Repo.insert
+    assert c1.__struct__() == BusCarRepoTestDoggy
+    assert c1.name == "melbo"
+    assert c1.age == 10
+    assert c1.is_hairy == true
+    {:error, c2} =
+      %Doggy{}
+      |> Doggy.changeset(%{"age" => 10, "is_hairy" => true})
+      |> Repo.insert
+    assert c2.errors == [name: :cannot_be_blank]
   end
 
 end
