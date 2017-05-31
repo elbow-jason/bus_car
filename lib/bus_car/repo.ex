@@ -121,10 +121,6 @@ defmodule BusCar.Repo do
             {:error, cs}
         end
       end
-      def update(%Changeset{} = cs, opts) do
-        {:error, cs}
-      end
-
 
       defp check_and_set(%Changeset{} = cs, opts) do
         model = cs |> BusCar.Changeset.apply_changes
