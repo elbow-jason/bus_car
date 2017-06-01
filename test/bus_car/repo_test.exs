@@ -19,13 +19,15 @@ defmodule BusCarRepoTestDoggy do
 end
 
 defmodule BusCarRepoTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
   alias BusCarTestRepo, as: Repo
   alias BusCarRepoTestDoggy, as: Doggy
 
   setup do
+    :timer.sleep(100)
     Repo.delete_index(Doggy)
     Repo.put_mapping(Doggy)
+    :timer.sleep(100)
     {:ok, %{}}
   end
 
@@ -74,7 +76,36 @@ defmodule BusCarRepoTest do
   #   Repo.delete(found.id)
   # end
 
+  test "Repo.insert inserts a new model and the count of models goes up" do
+    my_dog =
+      %Doggy{name: "fred", age: 1}
+      |> BusCarTestRepo.insert
+    assert !is_nil(my_dog.id)
+    assert is_binary(my_dog.id)
+    :timer.sleep(1000)
+    found = BusCarTestRepo.all(Doggy)
+    assert length(found) == 1
+  end
+
   test "Repo.update works" do
+    my_dog =
+      %Doggy{
+        name: "fred",
+        age: 1,
+      }
+      |> BusCarTestRepo.insert
+    changes = %{name: "bread"}
+    cs =
+      my_dog
+      |> BusCar.Changeset.cast(changes, [:name, :age])
+      |> BusCar.Changeset.check_validity
+    updated = BusCarTestRepo.update(cs)
+    assert updated.name == "bread"
+  end
+
+  test "Repo.update does not insert when it should be updating" do
+    empty_repo = BusCarTestRepo.all(Doggy)
+    assert length(empty_repo) == 0
     my_dog = %Doggy{
       name: "fred",
       age: 1,
@@ -85,7 +116,15 @@ defmodule BusCarRepoTest do
       |> BusCar.Changeset.cast(changes, [:name, :age])
       |> BusCar.Changeset.check_validity
     updated = BusCarTestRepo.update(cs)
-    assert updated.name == "bread"
+    :timer.sleep(1000)
+    found_update = BusCarTestRepo.all(Doggy, [])
+    assert length(found_update) == 1
+    assert updated.id == my_dog.id
+    loaded = BusCarTestRepo.get(Doggy, my_dog.id)
+    assert loaded.id == my_dog.id
+    assert loaded.id == updated.id
+    :timer.sleep(1000)
+    assert length(BusCarTestRepo.all(Doggy)) == 1
   end
 
   test "Repo.get_mapping works" do

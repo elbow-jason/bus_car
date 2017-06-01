@@ -136,23 +136,25 @@ defmodule BusCar.Repo do
 
       defp attempt_update(%{__struct__: module} = model, opts) do
         req = %{
-          path: [module.index, module.doctype, model.id],
+          path: [module.index, module.doctype, model.id, "_update"],
           query: %{
             version: model._version,
           },
-          body: model |> module.__before_update__ |> Document.to_json,
+          body: %{
+            doc: model |> module.__before_update__ |> Document.to_json,
+          },
         }
-        @api.put(req, opts)
+        @api.post(req, opts)
       end
 
-      defp do_update(%{__struct__: mod, _version: vsn, id: id} = struct, opts \\ []) do
-        # need optimistic locking on :_version here
-        @api.put(%{
-          query: %{version: vsn},
-          path: struct |> Document.path,
-          body: struct |> mod.__before_update__(opts) |> Document.to_json,
-        }, opts)
-      end
+      # defp do_update(%{__struct__: mod, _version: vsn, id: id} = struct, opts \\ []) do
+      #   # need optimistic locking on :_version here
+      #   @api.put(%{
+      #     query: %{version: vsn},
+      #     path: struct |> Document.path,
+      #     body: struct |> mod.__before_update__(opts) |> Document.to_json,
+      #   }, opts)
+      # end
 
       def delete(mod, id \\ [], opts \\ [])
       def delete(%{:__struct__ => mod, id: id}, opts, _) do
