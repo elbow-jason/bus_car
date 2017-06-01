@@ -19,15 +19,14 @@ defmodule BusCarRepoTestDoggy do
 end
 
 defmodule BusCarRepoTest do
-  use ExUnit.Case, async: false
+  use ExUnit.Case
   alias BusCarTestRepo, as: Repo
   alias BusCarRepoTestDoggy, as: Doggy
 
   setup do
-    :timer.sleep(100)
     Repo.delete_index(Doggy)
     Repo.put_mapping(Doggy)
-    :timer.sleep(100)
+    :timer.sleep(200)
     {:ok, %{}}
   end
 
@@ -76,15 +75,14 @@ defmodule BusCarRepoTest do
   #   Repo.delete(found.id)
   # end
 
-  test "Repo.insert inserts a new model and the count of models goes up" do
+  test "Repo.insert inserts a new model" do
     my_dog =
       %Doggy{name: "fred", age: 1}
       |> BusCarTestRepo.insert
     assert !is_nil(my_dog.id)
     assert is_binary(my_dog.id)
-    :timer.sleep(1000)
-    found = BusCarTestRepo.all(Doggy)
-    assert length(found) == 1
+    found = BusCarTestRepo.get(Doggy, my_dog.id)
+    assert found.id == my_dog.id
   end
 
   test "Repo.update works" do
@@ -116,9 +114,6 @@ defmodule BusCarRepoTest do
       |> BusCar.Changeset.cast(changes, [:name, :age])
       |> BusCar.Changeset.check_validity
     updated = BusCarTestRepo.update(cs)
-    :timer.sleep(1000)
-    found_update = BusCarTestRepo.all(Doggy, [])
-    assert length(found_update) == 1
     assert updated.id == my_dog.id
     loaded = BusCarTestRepo.get(Doggy, my_dog.id)
     assert loaded.id == my_dog.id
