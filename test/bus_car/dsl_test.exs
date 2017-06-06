@@ -28,6 +28,21 @@ defmodule BusCarDslTest do
     }
   end
 
+  test "from/size example" do
+    assert BusCarDsl.parse([
+      :query, :bool, :must, :match, "name", "jason", :size, 20, :from, 100
+    ]) == %{
+      size: 20,
+      from: 100,
+      query: %{
+        bool: %{
+          must: [
+            %{match: %{"name" => %{query: "jason"}}}
+          ]
+        }
+      }
+    }
+  end
 
 
   test "tirex example" do

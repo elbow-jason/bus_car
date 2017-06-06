@@ -3,7 +3,6 @@
 [![Build Status](https://travis-ci.org/elbow-jason/bus_car.svg?branch=master)](https://travis-ci.org/elbow-jason/bus_car)
 
 **A super simple Elasticsearch tool with its own DSL and Ecto-like usage.**
-###### Note:  This is tool/library is in extreme flux. Use at your own risk.
 
 ## Usage
 
@@ -70,7 +69,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
 ```elixir
 def deps do
-  [{:bus_car, "~> 0.2.3"}]
+  [{:bus_car, "~> 0.2.10"}]
 end
 ```
 
