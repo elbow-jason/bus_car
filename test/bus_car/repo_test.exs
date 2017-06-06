@@ -5,7 +5,7 @@ end
 defmodule BusCarRepoTestDoggy do
   use BusCar.Document
 
-  document "test_animal", "test_dog_repo" do
+  document "testing", "repo_test_doggy" do
     property :name,       :string
     property :age,        :integer
     property :is_hairy,   :boolean, default: false
@@ -124,9 +124,9 @@ defmodule BusCarRepoTest do
 
   test "Repo.get_mapping works" do
     expected = %{
-      "test_animal" => %{
+      "testing" => %{
         "mappings" => %{
-          "test_dog_repo" => %{
+          "repo_test_doggy" => %{
             "properties" => %{
               "name" => %{"type" => "string"},
               "age" => %{"type" => "integer"},

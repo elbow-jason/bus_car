@@ -1,7 +1,7 @@
 defmodule BusCarDocumentTest.Kitty do
   use BusCar.Document
 
-  document "animal", "cat" do
+  document "testing", "kitty" do
     property :name, :string
     property :age,  :integer
     property :is_hairy,  :bool, default: true

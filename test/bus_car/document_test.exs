@@ -1,7 +1,7 @@
 defmodule BusCarDocumentTest.Doggy do
   use BusCar.Document
 
-  document "animal", "dog" do
+  document "testing", "doggy" do
     property :name, :string
     property :age,  :integer
     property :is_hairy,  :bool, default: false
@@ -15,11 +15,11 @@ defmodule BusCarDocumentTest do
   alias BusCarDocumentTest.Doggy
 
   test "document macro gives a valid index" do
-    assert Doggy.index == :animal
+    assert Doggy.index == :testing
   end
 
   test "document macro gives a valid doctype" do
-    assert Doggy.doctype == :dog
+    assert Doggy.doctype == :doggy
   end
 
   test "document has a type :object" do
@@ -38,9 +38,9 @@ defmodule BusCarDocumentTest do
 
   test "document mapping returns a valid Elasticsearch mapping" do
     assert Doggy.mapping == %BusCar.Document{
-      index: :animal,
+      index: :testing,
       mappings: %{
-        dog: %{
+        doggy: %{
           properties: %{
             age:      %{type:  :integer},
             name:     %{type: :string},
