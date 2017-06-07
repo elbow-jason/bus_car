@@ -18,17 +18,25 @@ defmodule BusCarRepoTestDoggy do
   end
 end
 
+defmodule BusCarRepoTestKeyVal do
+  use BusCar.Document
+
+  document "testing", "repo_test_key_val" do
+    property :key,       :string
+    property :val,       :string
+  end
+
+  def changeset(model, changes) do
+    model
+    |> cast(changes, [:key, :val])
+    |> validate_required([:key, :val])
+  end
+end
+
 defmodule BusCarRepoTest do
   use ExUnit.Case
   alias BusCarTestRepo, as: Repo
   alias BusCarRepoTestDoggy, as: Doggy
-
-  setup do
-    Repo.delete_index(Doggy)
-    Repo.put_mapping(Doggy)
-    :timer.sleep(200)
-    {:ok, %{}}
-  end
 
   def exists?(mod) do
     :erlang.function_exported(mod, :module_info, 0)
@@ -118,8 +126,6 @@ defmodule BusCarRepoTest do
     loaded = BusCarTestRepo.get(Doggy, my_dog.id)
     assert loaded.id == my_dog.id
     assert loaded.id == updated.id
-    :timer.sleep(1000)
-    assert length(BusCarTestRepo.all(Doggy)) == 1
   end
 
   test "Repo.get_mapping works" do
@@ -136,6 +142,8 @@ defmodule BusCarRepoTest do
         }
       }
     }
+    Repo.delete_index(Doggy)
+    Repo.put_mapping(Doggy)
     assert Repo.get_mapping(Doggy) == expected
   end
 
@@ -160,4 +168,61 @@ defmodule BusCarRepoTest do
     assert c2.errors == [name: :cannot_be_blank]
   end
 
+end
+
+defmodule BusCarPaginationTest do
+  use ExUnit.Case
+  alias BusCarTestRepo, as: Repo
+  alias BusCarRepoTestKeyVal, as: KeyVal
+
+  setup do
+    Repo.delete_index(KeyVal)
+    Repo.put_mapping(KeyVal)
+    :timer.sleep(200)
+    {:ok, %{}}
+  end
+
+  def insert_many(count) do
+    1..count
+    |> Enum.each(fn num ->
+      %KeyVal{}
+      |> KeyVal.changeset(%{"key" => "key_#{num}_of_#{count}", "val" => "#{num}"})
+      |> Repo.insert
+    end)
+  end
+
+  test "pagination works" do
+    assert insert_many(35) == :ok
+    :timer.sleep(1000)
+    found1 =
+      KeyVal
+      |> Repo.all([:size, 12, :from, 0, :sort, "val", :asc])
+      |> Enum.map(fn item -> item.val end)
+    found2 =
+      KeyVal
+      |> Repo.all([:size, 12, :from, 12, :sort, "val", :asc])
+      |> Enum.map(fn item -> item.val end)
+    found3 =
+      KeyVal
+      |> Repo.all([:size, 12, :from, 24, :sort, "val", :asc])
+      |> Enum.map(fn item -> item.val end)
+    found4 =
+      KeyVal
+      |> Repo.all([:size, 12, :from, 35, :sort, "val", :asc])
+      |> Enum.map(fn item -> item.val end)
+    
+    assert length(found1) == 12
+    assert length(found2) == 12
+    assert length(found3) == 11
+    assert length(found4) == 0
+    found_set1 = MapSet.new(found1)
+    found_set2 = MapSet.new(found2)
+    in_common_1_2 = 
+      MapSet.intersection(found_set1, found_set2)
+      |> Enum.into([])
+      |> length
+    assert in_common_1_2 == 0
+    assert found1 == ["1", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "2"]
+  end
+  
 end
