@@ -69,7 +69,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
 ```elixir
 def deps do
-  [{:bus_car, "~> 0.2.10"}]
+  [{:bus_car, "~> 0.2.12"}]
 end
 ```
 
