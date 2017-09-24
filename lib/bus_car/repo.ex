@@ -85,7 +85,7 @@ defmodule BusCar.Repo do
       end
       def insert(%{:__struct__ => mod, id: id} = struct, opts) do
         %{
-          query: %{op_type: "create"},
+          # query: %{op_type: "create"},
           path: struct |> Document.path,
           body: struct |> mod.__before_insert__ |> Document.to_json,
         }

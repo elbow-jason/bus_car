@@ -5,7 +5,7 @@ end
 defmodule BusCarRepoTestDoggy do
   use BusCar.Document
 
-  document "testing", "repo_test_doggy" do
+  document "testing_doggy", "repo_test_doggy" do
     property :name,       :string
     property :age,        :integer
     property :is_hairy,   :boolean, default: false
@@ -21,9 +21,9 @@ end
 defmodule BusCarRepoTestKeyVal do
   use BusCar.Document
 
-  document "testing", "repo_test_key_val" do
-    property :key,       :string
-    property :val,       :string
+  document "testing_keyval", "repo_test_key_val" do
+    property :key,       :keyword
+    property :val,       :keyword
   end
 
   def changeset(model, changes) do
@@ -37,6 +37,11 @@ defmodule BusCarRepoTest do
   use ExUnit.Case
   alias BusCarTestRepo, as: Repo
   alias BusCarRepoTestDoggy, as: Doggy
+  
+  setup_all do
+    Repo.delete_index(Doggy)
+    Repo.put_mapping(Doggy)
+  end
 
   def exists?(mod) do
     :erlang.function_exported(mod, :module_info, 0)
@@ -110,8 +115,6 @@ defmodule BusCarRepoTest do
   end
 
   test "Repo.update does not insert when it should be updating" do
-    empty_repo = BusCarTestRepo.all(Doggy)
-    assert length(empty_repo) == 0
     my_dog = %Doggy{
       name: "fred",
       age: 1,
@@ -130,11 +133,11 @@ defmodule BusCarRepoTest do
 
   test "Repo.get_mapping works" do
     expected = %{
-      "testing" => %{
+      "testing_doggy" => %{
         "mappings" => %{
           "repo_test_doggy" => %{
             "properties" => %{
-              "name" => %{"type" => "string"},
+              "name" => %{"type" => "text"},
               "age" => %{"type" => "integer"},
               "is_hairy" => %{"type" => "boolean"},
             }
@@ -149,7 +152,7 @@ defmodule BusCarRepoTest do
 
   test "Repo.put_mapping works" do
     assert Repo.delete_index(Doggy) == %{"acknowledged" => true}
-    assert Repo.put_mapping(Doggy)  == %{"acknowledged" => true}
+    assert Repo.put_mapping(Doggy)  == %{"acknowledged" => true, "shards_acknowledged" => true}
   end
 
   test "Repo.insert works with a changeset" do
@@ -175,10 +178,14 @@ defmodule BusCarPaginationTest do
   alias BusCarTestRepo, as: Repo
   alias BusCarRepoTestKeyVal, as: KeyVal
 
-  setup do
+  setup_all do
     Repo.delete_index(KeyVal)
-    Repo.put_mapping(KeyVal)
+    IO.puts("DELETED KEY VAL")
     :timer.sleep(200)
+    IO.puts("REMAPPING #{inspect KeyVal.mapping()}")
+    Repo.put_mapping(KeyVal)
+    mapped = Repo.Api.get(path: "/testing_keyval/_mapping")
+    IO.puts("REMAPPED #{inspect mapped}")
     {:ok, %{}}
   end
 
@@ -192,6 +199,7 @@ defmodule BusCarPaginationTest do
   end
 
   test "pagination works" do
+    # Repo.put_mapping(KeyVal)
     assert insert_many(35) == :ok
     :timer.sleep(1000)
     found1 =
