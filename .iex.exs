@@ -10,7 +10,9 @@ alias Example.Repo
 alias Example.Doge
 
 defmodule ExampleRepo do
-  use BusCar.Repo, otp_app: :dev_example
+  use BusCar.Repo,
+    otp_app: :dev_example,
+    headers: [{"flim", "flam"}]
 end
 
 defmodule ExampleDoc do

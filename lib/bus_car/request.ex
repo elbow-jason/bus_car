@@ -57,7 +57,14 @@ defmodule BusCar.Request do
     {status, resp}
   end
 
-  def new(map \\ %{}) do
+  def new(map \\ %{})
+    
+  def new(list) when is_list(list) do
+    list
+    |> Enum.into(%{})
+    |> new
+  end
+  def new(%{} = map) do
     # the order of these calls matters
     # so don't mess them up
     %Request{}

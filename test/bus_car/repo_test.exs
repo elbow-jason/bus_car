@@ -180,12 +180,12 @@ defmodule BusCarPaginationTest do
 
   setup_all do
     Repo.delete_index(KeyVal)
-    IO.puts("DELETED KEY VAL")
+    # IO.puts("DELETED KEY VAL")
     :timer.sleep(200)
-    IO.puts("REMAPPING #{inspect KeyVal.mapping()}")
+    # IO.puts("REMAPPING #{inspect KeyVal.mapping()}")
     Repo.put_mapping(KeyVal)
-    mapped = Repo.Api.get(path: "/testing_keyval/_mapping")
-    IO.puts("REMAPPED #{inspect mapped}")
+    # mapped = Repo.Api.get(path: "/testing_keyval/_mapping")
+    # IO.puts("REMAPPED #{inspect mapped}")
     {:ok, %{}}
   end
 

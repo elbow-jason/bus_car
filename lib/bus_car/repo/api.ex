@@ -23,7 +23,7 @@ defmodule BusCar.Repo.Api do
       @protocol @cfg |> Keyword.get(:protocol, "http")
       @host     @cfg |> Keyword.get(:host)
       @port     @cfg |> Keyword.get(:port)
-      @headers  [{"Content-Type", "application/json"}]
+      @headers  [{"Content-Type", "application/json"}] ++ Keyword.get(@cfg, :headers, [])
 
       @default_map %{
         host:       @host,
@@ -53,7 +53,9 @@ defmodule BusCar.Repo.Api do
         |> request(opts)
       end
       def request(%Request{} = req, opts) do
+        {headers, opts} = Keyword.pop(opts, :headers, [])
         req
+        |> Map.update(:headers, headers, fn old_headers -> headers ++ old_headers  end)
         |> Request.send(opts)
         |> handle_response(opts)
       end
