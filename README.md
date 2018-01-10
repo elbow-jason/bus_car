@@ -10,7 +10,7 @@ Make the Repo
 
 ```elixir
 defmodule Example.Repo do
-  use BusCar.Repo, opt_app: :some_example
+  use BusCar.Repo, otp_app: :some_example
 end
 ```
 
