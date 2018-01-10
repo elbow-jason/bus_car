@@ -6,8 +6,8 @@ alias BusCar.Search
 alias BusCar.Dsl
 alias BusCar.Document
 
-alias Example.Repo
-alias Example.Doge
+alias ExampleRepo, as: Repo
+alias ExampleDoge, as: Doge
 
 defmodule ExampleRepo do
   use BusCar.Repo,

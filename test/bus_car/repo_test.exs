@@ -41,6 +41,9 @@ defmodule BusCarRepoTest do
   setup_all do
     Repo.delete_index(Doggy)
     Repo.put_mapping(Doggy)
+    Repo.delete_index(BusCarRepoTestKeyVal)    
+    Repo.put_mapping(BusCarRepoTestKeyVal)
+    :ok
   end
 
   def exists?(mod) do
@@ -152,7 +155,11 @@ defmodule BusCarRepoTest do
 
   test "Repo.put_mapping works" do
     assert Repo.delete_index(Doggy) == %{"acknowledged" => true}
-    assert Repo.put_mapping(Doggy)  == %{"acknowledged" => true, "shards_acknowledged" => true}
+    assert Repo.put_mapping(Doggy)  == %{
+      "acknowledged" => true,
+      "shards_acknowledged" => true,
+      "index" => "testing_doggy",
+    }
   end
 
   test "Repo.insert works with a changeset" do
