@@ -14,6 +14,7 @@ defmodule BusCarDocumentTest do
   doctest BusCar.Document
   alias BusCarDocumentTest.Doggy
 
+
   test "document macro gives a valid index" do
     assert Doggy.index == :testing
   end

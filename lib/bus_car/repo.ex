@@ -110,6 +110,16 @@ defmodule BusCar.Repo do
             err
         end
       end
+      defp handle_insert_response(%{"result" => "created", "_id" => id} = map, mod) do
+        # read own write
+        case get(mod, id) do
+          %{__struct__: mod} = struct ->
+            struct
+          {:error, _} = err ->
+            delete(mod, id)
+            err
+        end
+      end
 
 
       def update(cs, opts \\ [])
