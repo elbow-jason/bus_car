@@ -155,11 +155,10 @@ defmodule BusCarRepoTest do
 
   test "Repo.put_mapping works" do
     assert Repo.delete_index(Doggy) == %{"acknowledged" => true}
-    assert Repo.put_mapping(Doggy)  == %{
+    assert %{
       "acknowledged" => true,
       "shards_acknowledged" => true,
-      "index" => "testing_doggy",
-    }
+    } =  Repo.put_mapping(Doggy)
   end
 
   test "Repo.insert works with a changeset" do
