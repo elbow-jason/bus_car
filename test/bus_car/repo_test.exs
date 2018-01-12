@@ -6,7 +6,7 @@ defmodule BusCarRepoTestDoggy do
   use BusCar.Document
 
   document "testing_doggy", "repo_test_doggy" do
-    property :name,       :string
+    property :name,       :text
     property :age,        :integer
     property :is_hairy,   :boolean, default: false
   end
@@ -41,8 +41,10 @@ defmodule BusCarRepoTest do
   setup_all do
     Repo.delete_index(Doggy)
     Repo.put_mapping(Doggy)
+    :timer.sleep(100)
     Repo.delete_index(BusCarRepoTestKeyVal)    
     Repo.put_mapping(BusCarRepoTestKeyVal)
+    :timer.sleep(100)    
     :ok
   end
 

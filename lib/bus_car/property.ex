@@ -28,13 +28,16 @@ defmodule BusCar.Property do
     type_def
     |> extract_type
   end
-  defp extract_type(type_def) do
+  defp extract_type(type_def) when is_atom(type_def) do
     # type_def.type
     if :erlang.function_exported(type_def, :type, 0) do
       type_def.type
     else
       type_def
     end
+  end
+  defp extract_type(type_def) do
+    type_def
   end
 
 end
